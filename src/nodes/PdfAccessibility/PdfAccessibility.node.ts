@@ -115,37 +115,83 @@ export class PdfAccessibility implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Validate PDF',
+						name: '✅ Validate PDF',
 						value: 'validatePdf',
 						description: 'Validate PDF file for accessibility processing',
 						action: 'Validate a PDF file',
 					},
 					{
-						name: 'Analyze Accessibility',
+						name: '🔍 Analyze Accessibility',
 						value: 'analyzePdf',
 						description: 'Analyze PDF for WCAG compliance issues using AI',
 						action: 'Analyze PDF accessibility',
 					},
 					{
-						name: 'Remediate PDF',
+						name: '🔧 Remediate PDF',
 						value: 'remediatePdf',
 						description: 'Apply accessibility improvements to PDF',
 						action: 'Remediate PDF accessibility',
 					},
 					{
-						name: 'Generate Report',
+						name: '📊 Generate Report',
 						value: 'generateReport',
 						description: 'Generate detailed accessibility report',
 						action: 'Generate accessibility report',
 					},
 					{
-						name: 'Full Workflow',
+						name: '⚡ Full Workflow',
 						value: 'fullWorkflow',
 						description: 'Complete validation, analysis, and remediation',
 						action: 'Run full accessibility workflow',
 					},
 				],
 				default: 'fullWorkflow',
+			},
+
+			// PDF Input Method
+			{
+				displayName: 'Input Method',
+				name: 'inputMethod',
+				type: 'options',
+				options: [
+					{
+						name: 'Binary Data from Previous Node',
+						value: 'binary',
+						description: 'Use PDF from previous node (HTTP Request, Read Binary File, etc.)',
+					},
+					{
+						name: 'Upload File',
+						value: 'upload',
+						description: 'Upload a PDF file directly in this node',
+					},
+				],
+				default: 'binary',
+				description: 'Choose how to provide the PDF file',
+			},
+			{
+				displayName: 'PDF File Path',
+				name: 'pdfFile',
+				type: 'string',
+				default: '',
+				placeholder: '/path/to/your/file.pdf',
+				description: 'Full path to the PDF file on your system',
+				displayOptions: {
+					show: {
+						inputMethod: ['upload'],
+					},
+				},
+			},
+			{
+				displayName: 'Binary Property Name',
+				name: 'binaryPropertyName',
+				type: 'string',
+				default: 'data',
+				description: 'Name of the binary property containing the PDF file',
+				displayOptions: {
+					show: {
+						inputMethod: ['binary'],
+					},
+				},
 			},
 
 			// Validation Options
