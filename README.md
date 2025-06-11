@@ -5,173 +5,78 @@
 ![WCAG 2.1](https://img.shields.io/badge/WCAG-2.1%20AA-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-An N8N community node that provides comprehensive PDF accessibility analysis and remediation capabilities, ensuring WCAG 2.1 AA compliance through AI-powered automation.
+An N8N community node for comprehensive PDF accessibility analysis and remediation, ensuring WCAG 2.1 AA compliance through AI-powered automation.
 
 ## ✨ Features
 
-- 📋 **PDF Validation** - Comprehensive file validation with customizable limits
-- 🔍 **AI-Powered Analysis** - Intelligent accessibility analysis using multiple LLM providers (Anthropic, OpenAI, Google, Custom APIs)
+- 📋 **PDF Validation** - File validation with customizable limits
+- 🔍 **AI-Powered Analysis** - Multi-LLM support (Anthropic, OpenAI, Google, Custom APIs)
 - 🔧 **Automated Remediation** - Apply accessibility improvements automatically
 - 📊 **Detailed Reporting** - Generate professional HTML and text reports
 - 🎯 **WCAG Compliance** - Target A, AA, or AAA compliance levels
 - 🌐 **Multi-language Support** - Support for major European languages
-- 🤖 **Multi-LLM Support** - Choose from Anthropic Claude, OpenAI GPT, Google Gemini, or custom APIs
-- 🔄 **Flexible Workflows** - Use individual operations or complete workflow
+- 🔄 **Flexible Input Methods** - Binary data, file paths, or base64 encoding
 
-## 🚀 Installation
+## 🚀 Installation & Setup
 
-### Prerequisites
+### For N8N Docker Users
+Add to your `docker-compose.yml` environment section:
+```yaml
+environment:
+  - N8N_NODES_INCLUDE=n8n-nodes-pdf-accessibility
+```
 
-- N8N version 0.198.0 or later
-- Node.js 18+ 
-- API key for your chosen LLM provider (Anthropic, OpenAI, Google, or Custom)
-
-### Method 1: N8N Community Nodes
-
-1. In your N8N instance, go to **Settings → Community Nodes**
-2. Install package: `n8n-nodes-pdf-accessibility`
-3. Restart N8N
-
-### Method 2: Manual Installation
-
+Then restart your container:
 ```bash
-# Navigate to your N8N installation directory
-cd ~/.n8n/nodes
+docker-compose down && docker-compose up -d
+```
 
-# Install the package
+### For N8N Local Installation
+```bash
 npm install n8n-nodes-pdf-accessibility
-
-# Restart N8N
+# Restart N8N after installation
 ```
 
-### Method 3: Docker
+### Icon Troubleshooting
+If icons don't appear after installation:
+1. **Restart N8N** completely
+2. **Clear browser cache** (Ctrl+F5 or Cmd+Shift+R)
+3. **Check N8N version** (requires N8N >= 1.0.0)
+4. **Verify installation** in N8N Community Packages settings
 
-```bash
-# Add to your Dockerfile
-RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-accessibility
-```
+### Supported Environments
+- ✅ N8N Docker installations
+- ✅ N8N local/npm installations  
+- ✅ N8N Cloud (community packages enabled)
 
-## 🛠️ Setup
+## 🛠️ Configuration
 
-### 1. Input Requirements
+### Input Methods
+The node supports **three flexible input methods**:
 
-The node supports **three flexible input methods** for PDF files:
+1. **📁 Binary Data** - From previous nodes (HTTP Request, Google Drive, etc.)
+2. **🔗 File Path** - Direct file system access with expressions
+3. **📄 Base64** - For API-provided encoded data
 
-#### 🔗 **Method 1: Binary Data from Previous Node**
-- Default method for workflow integration
-- Works with any node that outputs PDF binary data
-- Supports dynamic binary property names with expressions
+### LLM Provider Setup
+Configure credentials for your chosen provider:
 
-**Compatible Input Nodes:**
-- **HTTP Request** (file uploads)
-- **Read Binary File** (local files)
-- **Google Drive, Dropbox, OneDrive** (cloud storage)
-- **AWS S3, FTP, SFTP** (file services)
-- Any node outputting PDF binary data
+- **Anthropic Claude** - API key from [Anthropic Console](https://console.anthropic.com/)
+- **OpenAI GPT** - API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+- **Google Gemini** - API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **Custom API** - Configure base URL, authentication, and API format
 
-#### 📁 **Method 2: File Path (Local/Network)**
-- Direct file system access
-- Supports expressions: `{{$json.filePath}}` or `/path/to/file.pdf`
-- Works with local files, network drives, mounted volumes
+### Operations
 
-#### 📄 **Method 3: Base64 Encoded Data**
-- For APIs returning base64 PDF data
-- Supports expressions: `{{$json.pdfBase64}}`
-- Handles data URLs: `data:application/pdf;base64,...`
-
-#### Example Setups:
-```
-# Binary Data Method
-HTTP Request → PDF Accessibility → Email Results
-Google Drive → PDF Accessibility → Save Report
-
-# File Path Method (no previous node needed)
-PDF Accessibility (file: /docs/report.pdf) → Generate Report
-
-# Base64 Method (from API)
-HTTP Request (API) → PDF Accessibility (base64) → Process Results
-```
-
-### 2. Configure LLM Provider Credentials
-
-Choose your preferred LLM provider and configure credentials:
-
-#### Anthropic (Claude)
-1. Go to **Credentials** in your N8N interface
-2. Click **Add Credential** → **Anthropic API**
-3. Enter your API key from [Anthropic Console](https://console.anthropic.com/)
-4. Test the connection
-
-#### OpenAI (GPT)
-1. Go to **Credentials** in your N8N interface
-2. Click **Add Credential** → **OpenAI API**
-3. Enter your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
-4. Optionally set organization ID and custom base URL
-5. Test the connection
-
-#### Google (Gemini)
-1. Go to **Credentials** in your N8N interface
-2. Click **Add Credential** → **Google API**
-3. Enter your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-4. Test the connection
-
-#### Custom API
-1. Go to **Credentials** in your N8N interface
-2. Click **Add Credential** → **Custom API**
-3. Enter your API key, base URL, and configure authentication
-4. Choose API format (OpenAI-compatible, Anthropic-compatible, or Custom)
-5. Test the connection
-
-### 2. Node Configuration
-
-The PDF Accessibility node offers five operation modes with flexible LLM provider selection:
-
-#### 🔍 **Validate PDF**
-Basic validation and content analysis
-- File size and page limits
-- Content type detection
-- Text extraction and analysis
-
-#### 🧠 **Analyze Accessibility** 
-AI-powered accessibility analysis with multiple LLM options
-- Choose from Anthropic Claude, OpenAI GPT, Google Gemini, or custom APIs
-- WCAG compliance assessment
-- Improvement recommendations
-- Compliance scoring
-
-#### 🔧 **Remediate PDF**
-Apply accessibility improvements
-- Document title generation
-- Language declaration
-- Metadata enhancement
-
-#### 📊 **Generate Report**
-Create detailed accessibility reports
-- HTML and text formats
-- Compliance scoring
-- Actionable recommendations
-
-#### ⚡ **Full Workflow**
-Complete end-to-end processing
-- All operations in sequence
-- Comprehensive results
-- Ready-to-use output
+1. **🔍 Validate PDF** - Basic validation and content analysis
+2. **🧠 Analyze Accessibility** - AI-powered WCAG compliance assessment
+3. **🔧 Remediate PDF** - Apply accessibility improvements
+4. **📊 Generate Report** - Create detailed accessibility reports
+5. **⚡ Full Workflow** - Complete end-to-end processing
 
 ## 📖 Usage Examples
 
-### Basic Validation
-
-```json
-{
-  "operation": "validatePdf",
-  "maxFileSize": 20,
-  "maxPages": 10,
-  "allowScanned": false
-}
-```
-
-### Complete Workflow
-
+### Complete Workflow Example
 ```json
 {
   "operation": "fullWorkflow",
@@ -184,116 +89,17 @@ Complete end-to-end processing
 }
 ```
 
-### OpenAI Example
-
-```json
-{
-  "operation": "fullWorkflow",
-  "llmProvider": "openai",
-  "model": "gpt-4-turbo-preview",
-  "wcagLevel": "AA",
-  "autoTitle": true,
-  "setLanguage": "en-US",
-  "reportFormat": "both"
-}
+### Simple Workflow
 ```
-
-### Google Gemini Example
-
-```json
-{
-  "operation": "fullWorkflow",
-  "llmProvider": "google",
-  "model": "gemini-1.5-pro-latest",
-  "wcagLevel": "AA",
-  "autoTitle": true,
-  "setLanguage": "en-US",
-  "reportFormat": "both"
-}
+HTTP Request (Upload) → PDF Accessibility (Full Workflow) → Email Results
 ```
 
 ### Batch Processing
-
-Use N8N's **Split in Batches** node to process multiple PDFs:
-
 ```
-HTTP Request (Upload) → Split in Batches → PDF Accessibility → Merge
+Schedule → HTTP Request → Split in Batches → PDF Accessibility → Email
 ```
 
-## 🎯 Configuration Options
-
-### Validation Options
-- **Maximum File Size**: 1-100 MB (default: 20 MB)
-- **Maximum Pages**: 1-50 pages (default: 10)
-- **Allow Scanned Documents**: Enable for OCR content (lower accuracy)
-- **Allow Form Documents**: Enable for fillable PDFs
-- **Minimum Text Length**: Required characters (default: 100)
-
-### AI Analysis Options
-- **LLM Provider**: Choose between Anthropic, OpenAI, Google, or Custom API
-- **AI Model**: Provider-specific models (Claude 3.5 Sonnet, GPT-4 Turbo, Gemini 1.5 Pro, etc.)
-- **WCAG Level**: A, AA (recommended), or AAA
-- **Analysis Depth**: Standard or comprehensive
-
-### Remediation Options
-- **Auto-Generate Title**: Extract title from content
-- **Document Language**: Set primary language (8 supported languages)
-- **Add Metadata**: Include accessibility metadata
-- **Output Filename**: Custom naming pattern
-
-### Report Options
-- **Format**: HTML, Text, or Both
-- **Include Validation**: Show validation details
-- **Include Recommendations**: Add AI suggestions
-- **Output Format**: Complete, Summary, or Report-only
-
-## 🔧 Workflow Examples
-
-### Simple File Processing
-
-```
-Webhook (File Upload) → PDF Accessibility (Full Workflow) → Email
-```
-
-### Local File Processing
-
-```
-Read Binary File → PDF Accessibility (Full Workflow) → Write Binary File
-```
-
-### Cloud Storage Integration
-
-```
-Google Drive (Download) → PDF Accessibility (Analyze) → 
-PDF Accessibility (Remediate) → Google Drive (Upload Remediated)
-```
-
-### Advanced Pipeline
-
-```
-HTTP Request → PDF Accessibility (Validate) → IF (Valid) → 
-PDF Accessibility (Analyze) → PDF Accessibility (Remediate) → 
-PDF Accessibility (Report) → Email + Store
-```
-
-### Batch Processing with Error Handling
-
-```
-Schedule → HTTP Request (Get Files) → Split in Batches → 
-PDF Accessibility (Full Workflow) → [Success] Email Results
-                                 → [Error] Log Error + Notify
-```
-
-### File Upload API Workflow
-
-```
-Webhook (POST /upload) → 
-HTTP Request (receive multipart/form-data) → 
-PDF Accessibility (Full Workflow) → 
-Respond to Webhook (accessibility report)
-```
-
-## 📊 Output Data Structure
+## 📊 Output Structure
 
 ### Validation Output
 ```json
@@ -301,34 +107,8 @@ Respond to Webhook (accessibility report)
   "valid": true,
   "pageCount": 5,
   "textLength": 2847,
-  "wordCount": 421,
   "fileSize": 156234,
-  "fileName": "document.pdf",
-  "validationDetails": {
-    "fileSize": true,
-    "pageCount": true,
-    "hasReadableText": true,
-    "notScanned": true,
-    "noForms": true,
-    "romanCharsOnly": true
-  }
-}
-```
-
-### Analysis Output
-```json
-{
-  "suggestedTitle": "Annual Accessibility Report 2024",
-  "language": "en-US",
-  "complianceScore": 85,
-  "criteriaAddressed": [
-    "1.1.1 Non-text Content",
-    "2.4.2 Page Titled",
-    "3.1.1 Language of Page"
-  ],
-  "remainingIssues": [
-    "Manual review needed for color contrast"
-  ]
+  "fileName": "document.pdf"
 }
 ```
 
@@ -337,10 +117,9 @@ Respond to Webhook (accessibility report)
 {
   "processingComplete": true,
   "validation": { /* validation results */ },
-  "analysis": { /* analysis results */ },
-  "remediation": { /* remediation results */ },
-  "report": { /* report data */ },
-  "processingTimestamp": "2024-01-01T12:00:00.000Z"
+  "analysis": { /* AI analysis with compliance score */ },
+  "remediation": { /* applied improvements */ },
+  "report": { /* HTML/text reports */ }
 }
 ```
 
@@ -349,134 +128,65 @@ Respond to Webhook (accessibility report)
 ### Supported Content
 - ✅ Text-based PDFs only
 - ✅ Roman character languages
-- ✅ Standard document structures
 - ❌ Scanned documents (optional, lower accuracy)
-- ❌ Fillable forms (optional)
 - ❌ Complex graphics/charts
-- ❌ Non-Roman scripts (Arabic, Chinese, etc.)
 
 ### Processing Limits
 - **File Size**: Maximum 100 MB
 - **Pages**: Maximum 50 pages
-- **Processing Time**: 30-180 seconds depending on complexity
-- **Batch Size**: Recommended 10 documents per batch
-
-### AI Analysis
-- Requires API key and credits for chosen LLM provider
-- Processing cost varies by provider:
-  - Anthropic Claude: ~$0.10-0.30 per document
-  - OpenAI GPT: ~$0.05-0.25 per document
-  - Google Gemini: ~$0.03-0.20 per document
-  - Custom APIs: Varies by provider
-- Internet connection required
-- Rate limits apply (see respective provider documentation)
-
-## 🔒 Security & Privacy
-
-- 📁 **No Data Storage**: Files processed in memory only
-- 🔐 **Secure Credentials**: API keys encrypted by N8N
-- 🌐 **API Communication**: HTTPS only to Anthropic
-- 🗑️ **Auto Cleanup**: Temporary data automatically cleared
-- 📋 **Compliance**: Follows data protection best practices
+- **Processing Time**: 30-180 seconds
+- **Cost**: ~$0.03-0.30 per document (varies by LLM provider)
 
 ## 🚨 Troubleshooting
-
-### Common Issues
 
 **"PDF parsing failed"**
 - Ensure PDF is not corrupted or password-protected
 - Check file size and page limits
-- Verify PDF contains readable text
 
 **"AI API Error"**
-- Verify your LLM provider API credentials
+- Verify LLM provider API credentials
 - Check API quota and billing status
-- Ensure internet connectivity
-- Verify the selected model is available for your account
 
-**"Remediation failed"**
-- PDF may have security restrictions
-- File corruption or unsupported features
-- Try with a simpler PDF first
+**"Binary data missing"**
+- **Binary Method**: Ensure previous node provides PDF data
+- **File Path Method**: Check file path exists
+- **Base64 Method**: Verify base64 data is valid
 
-**"PDF file required" or "Binary data missing"**
-- **Binary Method**: Ensure previous node provides PDF binary data
-- **File Path Method**: Check file path exists and is accessible
-- **Base64 Method**: Verify base64 data is valid PDF format
-- Switch input methods if one doesn't work for your use case
+**Icons not showing**
+- Restart N8N after installation
+- Clear browser cache (Ctrl+F5)
+- Check N8N logs for errors
 
-**"File validation failed"**
-- Check file size (must be under limit)
-- Verify PDF format (not image or other format)
-- Ensure document contains text content
+## 🔒 Security & Privacy
 
-### Debug Mode
-
-Enable debug logging in your N8N instance:
-```bash
-export N8N_LOG_LEVEL=debug
-```
-
-### Getting Help
-
-1. 📚 Check the [documentation](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/wiki)
-2. 🐛 Report issues on [GitHub](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues)
-3. 💬 Join the [N8N Community](https://community.n8n.io/)
-4. 📧 Email support: [hello@hurtadojose.com](mailto:hello@hurtadojose.com)
+- 📁 **No Data Storage** - Files processed in memory only
+- 🔐 **Secure Credentials** - API keys encrypted by N8N
+- 🌐 **HTTPS Only** - Secure API communication
+- 🗑️ **Auto Cleanup** - Temporary data automatically cleared
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+Contributions welcome! Check our [GitHub repository](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility) for details.
 
 ### Development Setup
-
 ```bash
-# Clone the repository
 git clone https://github.com/joselhurtado/n8n-nodes-pdf-accessibility.git
 cd n8n-nodes-pdf-accessibility
-
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Run tests
 npm test
-
-# Start development mode
-npm run dev
 ```
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- [N8N](https://n8n.io/) for the amazing automation platform
-- [Anthropic](https://anthropic.com/) for Claude AI capabilities
-- [OpenAI](https://openai.com/) for GPT model access
-- [Google](https://ai.google.dev/) for Gemini AI capabilities
+- [N8N](https://n8n.io/) for the automation platform
+- [Anthropic](https://anthropic.com/), [OpenAI](https://openai.com/), [Google](https://ai.google.dev/) for AI capabilities
 - [PDF-lib](https://pdf-lib.js.org/) for PDF manipulation
-- The accessibility community for WCAG guidelines
-
-## 📈 Roadmap
-
-- [x] Multi-LLM provider support (Anthropic, OpenAI, Google, Custom)
-- [ ] Advanced structure tagging
-- [ ] Color contrast analysis
-- [ ] Image OCR and alt-text generation
-- [ ] Table accessibility improvements
-- [ ] Multi-language expansion
-- [ ] Custom compliance templates
-- [ ] Batch processing optimization
-- [ ] Real-time collaboration features
-- [ ] Local LLM support (Ollama, etc.)
-- [ ] Fine-tuned accessibility models
 
 ---
 
-**Made with ❤️ by [Jose Hurtado](https://github.com/josehurtado)**
-
-*Empowering digital accessibility through automation*
+**Made with ❤️ by [Jose Hurtado](https://github.com/josehurtado) | Empowering digital accessibility through automation**
