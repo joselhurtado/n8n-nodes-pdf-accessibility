@@ -1,42 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Main background -->
-  <rect width="60" height="60" rx="12" fill="#667eea"/>
-  
-  <!-- PDF Document base -->
-  <rect x="12" y="8" width="28" height="38" rx="2" fill="white" stroke="#e0e0e0" stroke-width="1"/>
-  
-  <!-- PDF header -->
-  <rect x="12" y="8" width="28" height="8" rx="2" fill="#dc3545"/>
-  <text x="26" y="14.5" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="white" text-anchor="middle">PDF</text>
-  
-  <!-- Document lines -->
-  <line x1="16" y1="20" x2="32" y2="20" stroke="#ccc" stroke-width="1"/>
-  <line x1="16" y1="23" x2="30" y2="23" stroke="#ccc" stroke-width="1"/>
-  <line x1="16" y1="26" x2="34" y2="26" stroke="#ccc" stroke-width="1"/>
-  <line x1="16" y1="29" x2="28" y2="29" stroke="#ccc" stroke-width="1"/>
-  <line x1="16" y1="32" x2="32" y2="32" stroke="#ccc" stroke-width="1"/>
-  <line x1="16" y1="35" x2="26" y2="35" stroke="#ccc" stroke-width="1"/>
-  
-  <!-- Accessibility symbol (person in wheelchair) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none">
+  <rect width="60" height="60" fill="#667eea" rx="12"/>
+  <rect width="28" height="38" x="12" y="8" fill="#fff" stroke="#e0e0e0" rx="2"/>
+  <rect width="28" height="8" x="12" y="8" fill="#dc3545" rx="2"/>
+  <text x="26" y="14.5" fill="#fff" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle">PDF</text>
+  <path stroke="#ccc" d="M16 20h16M16 23h14M16 26h18M16 29h12M16 32h16M16 35h10"/>
   <circle cx="45" cy="15" r="10" fill="#28a745"/>
-  <g transform="translate(40, 10)">
-    <!-- Wheelchair symbol -->
-    <circle cx="5" cy="4" r="1.5" fill="white"/>
-    <rect x="4" y="5.5" width="2" height="3" fill="white"/>
-    <circle cx="7" cy="12" r="2.5" stroke="white" stroke-width="1" fill="none"/>
-    <circle cx="3" cy="12" r="1" fill="white"/>
-    <line x1="4" y1="12" x2="4.5" y2="12" stroke="white" stroke-width="1"/>
-    <line x1="4.5" y1="8.5" x2="6.5" y2="9.5" stroke="white" stroke-width="1"/>
+  <g transform="translate(40 10)">
+    <circle cx="5" cy="4" r="1.5" fill="#fff"/>
+    <path fill="#fff" d="M4 5.5h2v3H4z"/>
+    <circle cx="7" cy="12" r="2.5" stroke="#fff"/>
+    <circle cx="3" cy="12" r="1" fill="#fff"/>
+    <path stroke="#fff" d="M4 12h.5M4.5 8.5l2 1"/>
   </g>
-  
-  <!-- WCAG indicator -->
-  <rect x="42" y="40" width="16" height="16" rx="2" fill="#ffc107"/>
-  <text x="50" y="46" font-family="Arial, sans-serif" font-size="4" font-weight="bold" fill="#333" text-anchor="middle">WCAG</text>
-  <text x="50" y="50" font-family="Arial, sans-serif" font-size="4" font-weight="bold" fill="#333" text-anchor="middle">2.1</text>
-  <text x="50" y="54" font-family="Arial, sans-serif" font-size="4" font-weight="bold" fill="#333" text-anchor="middle">AA</text>
-  
-  <!-- AI indicator -->
+  <rect width="16" height="16" x="42" y="40" fill="#ffc107" rx="2"/>
+  <text x="50" y="46" fill="#333" font-family="Arial, sans-serif" font-size="4" font-weight="bold" text-anchor="middle">WCAG</text>
+  <text x="50" y="50" fill="#333" font-family="Arial, sans-serif" font-size="4" font-weight="bold" text-anchor="middle">2.1</text>
+  <text x="50" y="54" fill="#333" font-family="Arial, sans-serif" font-size="4" font-weight="bold" text-anchor="middle">AA</text>
   <circle cx="15" cy="48" r="8" fill="#6f42c1"/>
-  <text x="15" y="51" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+  <text x="15" y="51" fill="#fff" font-family="Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle">AI</text>
 </svg>

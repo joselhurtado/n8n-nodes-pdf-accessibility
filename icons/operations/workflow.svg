@@ -1,18 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Workflow background -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
   <circle cx="12" cy="12" r="10" fill="#667eea"/>
-  <!-- Workflow steps -->
-  <circle cx="8" cy="8" r="2" fill="white"/>
-  <circle cx="16" cy="8" r="2" fill="white"/>
-  <circle cx="8" cy="16" r="2" fill="white"/>
-  <circle cx="16" cy="16" r="2" fill="white"/>
-  <!-- Connecting arrows -->
-  <path d="M10 8h4M16 10v4M14 16H10M8 14V10" stroke="white" stroke-width="2" marker-end="url(#arrowhead)"/>
-  <!-- Arrow marker -->
+  <circle cx="8" cy="8" r="2" fill="#fff"/>
+  <circle cx="16" cy="8" r="2" fill="#fff"/>
+  <circle cx="8" cy="16" r="2" fill="#fff"/>
+  <circle cx="16" cy="16" r="2" fill="#fff"/>
+  <path stroke="#fff" stroke-width="2" marker-end="url(#a)" d="M10 8h4m2 2v4m-2 2h-4m-2-2v-4"/>
   <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="white"/>
+    <marker id="a" markerHeight="7" markerWidth="10" orient="auto" refX="9" refY="3.5">
+      <path fill="#fff" d="m0 0 10 3.5L0 7z"/>
     </marker>
   </defs>
 </svg>

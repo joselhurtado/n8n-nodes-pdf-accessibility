@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Brain/AI background -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
   <circle cx="12" cy="12" r="10" fill="#6f42c1"/>
-  <!-- Magnifying glass -->
-  <circle cx="10" cy="10" r="4" stroke="white" stroke-width="2" fill="none"/>
-  <path d="M16 16l-4-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
-  <!-- AI dots -->
-  <circle cx="8" cy="8" r="0.5" fill="white"/>
-  <circle cx="10" cy="7" r="0.5" fill="white"/>
-  <circle cx="12" cy="8" r="0.5" fill="white"/>
+  <circle cx="10" cy="10" r="4" stroke="#fff" stroke-width="2"/>
+  <path stroke="#fff" stroke-linecap="round" stroke-width="2" d="m16 16-4-4"/>
+  <circle cx="8" cy="8" r=".5" fill="#fff"/>
+  <circle cx="10" cy="7" r=".5" fill="#fff"/>
+  <circle cx="12" cy="8" r=".5" fill="#fff"/>
 </svg>
