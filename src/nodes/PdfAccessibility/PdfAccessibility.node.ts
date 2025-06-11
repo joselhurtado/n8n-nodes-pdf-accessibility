@@ -12,6 +12,7 @@ import { validatePdf } from './operations/validatePdf';
 import { analyzePdf } from './operations/analyzePdf';
 import { remediatePdf } from './operations/remediatePdf';
 import { generateReport } from './operations/generateReport';
+import { getPdfInput } from './utils/inputUtils';
 import { SUPPORTED_LANGUAGES } from './config';
 import { LLMProviderFactory, LLMProviderType } from './providers';
 import { PdfValidationResult, AccessibilityAnalysis } from './interfaces';
@@ -569,35 +570,34 @@ export class PdfAccessibility implements INodeType {
 						break;
 
 					case 'analyzePdf':
-						// Require validation data from previous node
+						// Can work standalone or with validation data from previous node
 						const validationInput = items[i].json as unknown as PdfValidationResult;
-						if (!validationInput || !validationInput.extractedText) {
-							throw new NodeOperationError(
-								this.getNode(),
-								'Analyze PDF operation requires validation data from a previous PDF validation step',
-								{ itemIndex: i }
-							);
+						if (validationInput && validationInput.extractedText) {
+							// Use validation data from previous node
+							result = await analyzePdf.call(this, i, validationInput);
+						} else {
+							// Perform validation and analysis directly
+							result = await analyzePdf.call(this, i);
 						}
-						result = await analyzePdf.call(this, i, validationInput);
 						break;
 
 					case 'remediatePdf':
-						// Require analysis data from previous node
+						// Can work standalone or with analysis data from previous node
 						const analysisInput = items[i].json as unknown as AccessibilityAnalysis;
-						if (!analysisInput || !analysisInput.suggestedTitle) {
-							throw new NodeOperationError(
-								this.getNode(),
-								'Remediate PDF operation requires analysis data from a previous PDF analysis step',
-								{ itemIndex: i }
+						let remediationResult;
+						if (analysisInput && analysisInput.suggestedTitle) {
+							// Use analysis data from previous node
+							const binaryInputData = this.helpers.assertBinaryData(i, 'data');
+							remediationResult = await remediatePdf.call(
+								this, 
+								i, 
+								analysisInput, 
+								binaryInputData.fileName || 'unknown.pdf'
 							);
+						} else {
+							// Perform validation, analysis, and remediation directly
+							remediationResult = await remediatePdf.call(this, i);
 						}
-						const binaryInputData = this.helpers.assertBinaryData(i, 'data');
-						const remediationResult = await remediatePdf.call(
-							this, 
-							i, 
-							analysisInput, 
-							binaryInputData.fileName || 'unknown.pdf'
-						);
 						result = remediationResult.result;
 						binaryData.remediatedPdf = {
 							data: remediationResult.remediatedBuffer.toString('base64'),
@@ -607,22 +607,21 @@ export class PdfAccessibility implements INodeType {
 						break;
 
 					case 'generateReport':
-						// Require validation and analysis data
+						// Can work standalone or with validation and analysis data from previous steps
 						const reportInput = items[i].json;
-						if (!reportInput || !reportInput.validation || !reportInput.analysis) {
-							throw new NodeOperationError(
-								this.getNode(),
-								'Generate Report operation requires validation and analysis data from previous steps',
-								{ itemIndex: i }
+						if (reportInput && reportInput.validation && reportInput.analysis) {
+							// Use data from previous steps
+							result = await generateReport.call(
+								this, 
+								i, 
+								reportInput.validation as unknown as PdfValidationResult, 
+								reportInput.analysis as unknown as AccessibilityAnalysis, 
+								reportInput.remediation as any
 							);
+						} else {
+							// Perform validation, analysis, and generate report directly
+							result = await generateReport.call(this, i);
 						}
-						result = await generateReport.call(
-							this, 
-							i, 
-							reportInput.validation as unknown as PdfValidationResult, 
-							reportInput.analysis as unknown as AccessibilityAnalysis, 
-							reportInput.remediation as any
-						);
 						break;
 
 					case 'fullWorkflow':
@@ -639,12 +638,11 @@ export class PdfAccessibility implements INodeType {
 
 						const analysis = await analyzePdf.call(this, i, validation);
 						
-						const originalBinaryData = this.helpers.assertBinaryData(i, 'data');
 						const remediation = await remediatePdf.call(
 							this, 
 							i, 
 							analysis, 
-							originalBinaryData.fileName || 'unknown.pdf'
+							validation.fileName
 						);
 
 						const report = await generateReport.call(this, i, validation, analysis, remediation.result);
@@ -660,7 +658,12 @@ export class PdfAccessibility implements INodeType {
 						};
 
 						// Add remediated PDF to binary data
-						binaryData.originalPdf = items[i].binary?.data;
+						const pdfInput = await getPdfInput(this, i);
+						binaryData.originalPdf = {
+							data: pdfInput.buffer.toString('base64'),
+							mimeType: 'application/pdf',
+							fileName: pdfInput.fileName,
+						};
 						binaryData.remediatedPdf = {
 							data: remediation.remediatedBuffer.toString('base64'),
 							mimeType: 'application/pdf',

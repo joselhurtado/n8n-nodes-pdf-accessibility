@@ -1,22 +1,99 @@
 import { IExecuteFunctions } from 'n8n-workflow';
 import { PdfUtils } from '../utils/pdfUtils';
-import { AccessibilityAnalysis, RemediationResult } from '../interfaces';
+import { AiUtils } from '../utils/aiUtils';
+import { getPdfInput } from '../utils/inputUtils';
+import { AccessibilityAnalysis, RemediationResult, PdfValidationResult } from '../interfaces';
+import { LLMProviderType } from '../providers';
 
 export async function remediatePdf(
 	this: IExecuteFunctions,
 	itemIndex: number,
-	analysis: AccessibilityAnalysis,
-	originalFileName: string,
+	analysis?: AccessibilityAnalysis,
+	originalFileName?: string,
 ): Promise<{ result: RemediationResult; remediatedBuffer: Buffer }> {
+	// Get analysis data or perform analysis if not provided
+	let analysisData: AccessibilityAnalysis;
+	let pdfBuffer: Buffer;
+	let fileName: string;
+	
+	if (analysis && originalFileName) {
+		// Use provided analysis data (from full workflow)
+		analysisData = analysis;
+		pdfBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, 'data');
+		fileName = originalFileName;
+	} else {
+		// Get PDF input and perform analysis
+		const pdfInput = await getPdfInput(this, itemIndex);
+		pdfBuffer = pdfInput.buffer;
+		fileName = pdfInput.fileName;
+		
+		// Validate PDF first
+		const maxFileSize = this.getNodeParameter('maxFileSize', itemIndex, 20) as number * 1024 * 1024;
+		const maxPages = this.getNodeParameter('maxPages', itemIndex, 10) as number;
+		const allowScanned = this.getNodeParameter('allowScanned', itemIndex, false) as boolean;
+		const allowForms = this.getNodeParameter('allowForms', itemIndex, false) as boolean;
+		const minTextLength = this.getNodeParameter('minTextLength', itemIndex, 100) as number;
+		
+		const validation = await PdfUtils.validatePdf(
+			pdfBuffer,
+			fileName,
+			{
+				maxFileSize,
+				maxPages,
+				allowScanned,
+				allowForms,
+				minTextLength,
+			},
+		);
+		
+		if (!validation.valid) {
+			throw new Error(`PDF validation failed: ${validation.error || 'Unknown validation error'}`);
+		}
+		
+		// Perform analysis
+		const llmProvider = this.getNodeParameter('llmProvider', itemIndex, 'anthropic') as LLMProviderType;
+		const model = this.getNodeParameter('model', itemIndex) as string;
+		const wcagLevel = this.getNodeParameter('wcagLevel', itemIndex, 'AA') as 'A' | 'AA' | 'AAA';
+		
+		const credentialTypeMap = {
+			anthropic: 'anthropicApi',
+			openai: 'openAIApi',
+			google: 'googleApi',
+			custom: 'customApi',
+		};
+		
+		const credentialType = credentialTypeMap[llmProvider];
+		if (!credentialType) {
+			throw new Error(`Unsupported LLM provider: ${llmProvider}`);
+		}
+		
+		analysisData = await AiUtils.analyzeAccessibility(
+			this,
+			validation.extractedText,
+			{
+				fileName: validation.fileName,
+				pageCount: validation.pageCount,
+				wordCount: validation.wordCount,
+			},
+			llmProvider,
+			credentialType,
+			{
+				wcagLevel,
+				model,
+				language: 'en-US',
+				analysisDepth: 'standard',
+			},
+		);
+	}
+
 	// Get remediation options
 	const autoTitle = this.getNodeParameter('autoTitle', itemIndex, true) as boolean;
 	const setLanguage = this.getNodeParameter('setLanguage', itemIndex, 'en-US') as string;
 	const addMetadata = this.getNodeParameter('addMetadata', itemIndex, true) as boolean;
 	const outputFilename = this.getNodeParameter('outputFilename', itemIndex, 'ACCESSIBLE_{original}') as string;
 
-	// Get original PDF buffer
-	const originalBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, 'data');
-	const originalFileSize = originalBuffer.length;
+	// Use the PDF buffer and file size
+	const originalFileSize = pdfBuffer.length;
 
 	try {
 		// Prepare improvements
@@ -26,8 +103,8 @@ export async function remediatePdf(
 			metadata?: Record<string, string>;
 		} = {};
 
-		if (autoTitle && analysis.suggestedTitle) {
-			improvements.title = analysis.suggestedTitle;
+		if (autoTitle && analysisData.suggestedTitle) {
+			improvements.title = analysisData.suggestedTitle;
 		}
 
 		if (setLanguage) {
@@ -38,23 +115,23 @@ export async function remediatePdf(
 			improvements.metadata = {
 				'accessibility-service': 'N8N PDF Accessibility Service',
 				'wcag-level': 'AA',
-				'compliance-score': analysis.complianceScore.toString(),
+				'compliance-score': analysisData.complianceScore.toString(),
 			};
 		}
 
 		// Apply remediation
-		const remediatedBuffer = await PdfUtils.remediatePdf(originalBuffer, improvements);
+		const remediatedBuffer = await PdfUtils.remediatePdf(pdfBuffer, improvements);
 
 		// Generate output filename
 		const remediatedFileName = outputFilename.replace(
 			'{original}',
-			originalFileName.replace(/\.[^/.]+$/, '') // Remove extension
+			fileName.replace(/\.[^/.]+$/, '') // Remove extension
 		) + '.pdf';
 
 		// Create result
 		const result: RemediationResult = {
 			success: true,
-			originalFileName,
+			originalFileName: fileName,
 			remediatedFileName,
 			originalFileSize,
 			remediatedFileSize: remediatedBuffer.length,
@@ -72,7 +149,7 @@ export async function remediatePdf(
 	} catch (error) {
 		const result: RemediationResult = {
 			success: false,
-			originalFileName,
+			originalFileName: fileName,
 			remediatedFileName: outputFilename,
 			originalFileSize,
 			remediatedFileSize: 0,
