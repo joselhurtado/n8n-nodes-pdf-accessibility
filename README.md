@@ -53,7 +53,27 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-accessibilit
 
 ## 🛠️ Setup
 
-### 1. Configure LLM Provider Credentials
+### 1. Input Requirements
+
+**Important**: This node requires PDF files as binary input. The previous node in your workflow must provide PDF data in the binary property named `data`.
+
+#### Compatible Input Nodes:
+- **HTTP Request** (for file uploads)
+- **Read Binary File** (for local files)
+- **Google Drive** (download file)
+- **Dropbox** (download file)
+- **AWS S3** (get object)
+- **OneDrive** (download file)
+- Any node that outputs PDF files as binary data
+
+#### Example Input Setup:
+```
+HTTP Request (PDF upload) → PDF Accessibility → Email Results
+Read Binary File (local PDF) → PDF Accessibility → Save Results
+Google Drive (download PDF) → PDF Accessibility → Generate Report
+```
+
+### 2. Configure LLM Provider Credentials
 
 Choose your preferred LLM provider and configure credentials:
 
@@ -216,6 +236,19 @@ HTTP Request (Upload) → Split in Batches → PDF Accessibility → Merge
 Webhook (File Upload) → PDF Accessibility (Full Workflow) → Email
 ```
 
+### Local File Processing
+
+```
+Read Binary File → PDF Accessibility (Full Workflow) → Write Binary File
+```
+
+### Cloud Storage Integration
+
+```
+Google Drive (Download) → PDF Accessibility (Analyze) → 
+PDF Accessibility (Remediate) → Google Drive (Upload Remediated)
+```
+
 ### Advanced Pipeline
 
 ```
@@ -230,6 +263,15 @@ PDF Accessibility (Report) → Email + Store
 Schedule → HTTP Request (Get Files) → Split in Batches → 
 PDF Accessibility (Full Workflow) → [Success] Email Results
                                  → [Error] Log Error + Notify
+```
+
+### File Upload API Workflow
+
+```
+Webhook (POST /upload) → 
+HTTP Request (receive multipart/form-data) → 
+PDF Accessibility (Full Workflow) → 
+Respond to Webhook (accessibility report)
 ```
 
 ## 📊 Output Data Structure
@@ -337,6 +379,12 @@ PDF Accessibility (Full Workflow) → [Success] Email Results
 - PDF may have security restrictions
 - File corruption or unsupported features
 - Try with a simpler PDF first
+
+**"PDF file required" or "Binary data missing"**
+- Ensure the previous node provides PDF files as binary data
+- Check that the binary property is named 'data'
+- Verify the file is actually a PDF (not image or other format)
+- Use nodes like HTTP Request, Read Binary File, or cloud storage nodes
 
 **"File validation failed"**
 - Check file size (must be under limit)

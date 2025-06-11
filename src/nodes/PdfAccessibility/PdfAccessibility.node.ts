@@ -24,7 +24,7 @@ export class PdfAccessibility implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Analyze and remediate PDF documents for WCAG accessibility compliance',
+		description: 'Analyze and remediate PDF documents for WCAG accessibility compliance. Requires PDF file as binary input.',
 		defaults: {
 			name: 'PDF Accessibility',
 		},

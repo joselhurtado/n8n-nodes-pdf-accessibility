@@ -13,9 +13,21 @@ export async function validatePdf(
 	const allowForms = this.getNodeParameter('allowForms', itemIndex, false) as boolean;
 	const minTextLength = this.getNodeParameter('minTextLength', itemIndex, 100) as number;
 
-	// Get binary data
-	const binaryData = this.helpers.assertBinaryData(itemIndex, 'data');
-	const pdfBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, 'data');
+	// Get binary data with helpful error message
+	let binaryData;
+	let pdfBuffer;
+	
+	try {
+		binaryData = this.helpers.assertBinaryData(itemIndex, 'data');
+		pdfBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, 'data');
+	} catch (error) {
+		throw new Error(
+			'PDF file required: This node expects a PDF file as binary input. ' +
+			'Connect a node that provides PDF data (like HTTP Request for file upload, ' +
+			'Read Binary File, or Google Drive) to the "data" binary property. ' +
+			'Make sure the previous node outputs the PDF file in the binary data with key "data".'
+		);
+	}
 
 	// Validate PDF
 	const validation = await PdfUtils.validatePdf(
