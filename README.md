@@ -55,22 +55,41 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-accessibilit
 
 ### 1. Input Requirements
 
-**Important**: This node requires PDF files as binary input. The previous node in your workflow must provide PDF data in the binary property named `data`.
+The node supports **three flexible input methods** for PDF files:
 
-#### Compatible Input Nodes:
-- **HTTP Request** (for file uploads)
-- **Read Binary File** (for local files)
-- **Google Drive** (download file)
-- **Dropbox** (download file)
-- **AWS S3** (get object)
-- **OneDrive** (download file)
-- Any node that outputs PDF files as binary data
+#### 🔗 **Method 1: Binary Data from Previous Node**
+- Default method for workflow integration
+- Works with any node that outputs PDF binary data
+- Supports dynamic binary property names with expressions
 
-#### Example Input Setup:
+**Compatible Input Nodes:**
+- **HTTP Request** (file uploads)
+- **Read Binary File** (local files)
+- **Google Drive, Dropbox, OneDrive** (cloud storage)
+- **AWS S3, FTP, SFTP** (file services)
+- Any node outputting PDF binary data
+
+#### 📁 **Method 2: File Path (Local/Network)**
+- Direct file system access
+- Supports expressions: `{{$json.filePath}}` or `/path/to/file.pdf`
+- Works with local files, network drives, mounted volumes
+
+#### 📄 **Method 3: Base64 Encoded Data**
+- For APIs returning base64 PDF data
+- Supports expressions: `{{$json.pdfBase64}}`
+- Handles data URLs: `data:application/pdf;base64,...`
+
+#### Example Setups:
 ```
-HTTP Request (PDF upload) → PDF Accessibility → Email Results
-Read Binary File (local PDF) → PDF Accessibility → Save Results
-Google Drive (download PDF) → PDF Accessibility → Generate Report
+# Binary Data Method
+HTTP Request → PDF Accessibility → Email Results
+Google Drive → PDF Accessibility → Save Report
+
+# File Path Method (no previous node needed)
+PDF Accessibility (file: /docs/report.pdf) → Generate Report
+
+# Base64 Method (from API)
+HTTP Request (API) → PDF Accessibility (base64) → Process Results
 ```
 
 ### 2. Configure LLM Provider Credentials
@@ -381,10 +400,10 @@ Respond to Webhook (accessibility report)
 - Try with a simpler PDF first
 
 **"PDF file required" or "Binary data missing"**
-- Ensure the previous node provides PDF files as binary data
-- Check that the binary property is named 'data'
-- Verify the file is actually a PDF (not image or other format)
-- Use nodes like HTTP Request, Read Binary File, or cloud storage nodes
+- **Binary Method**: Ensure previous node provides PDF binary data
+- **File Path Method**: Check file path exists and is accessible
+- **Base64 Method**: Verify base64 data is valid PDF format
+- Switch input methods if one doesn't work for your use case
 
 **"File validation failed"**
 - Check file size (must be under limit)

@@ -17,36 +17,61 @@ export async function validatePdf(
 
 	// Get PDF data based on input method
 	let binaryData;
-	let pdfBuffer;
+	let pdfBuffer: Buffer;
 	let fileName = 'unknown.pdf';
 	
-	if (inputMethod === 'upload') {
-		// Handle file upload
-		const pdfFilePath = this.getNodeParameter('pdfFile', itemIndex, '') as string;
-		if (!pdfFilePath) {
-			throw new Error('Please select a PDF file to upload');
+	switch (inputMethod) {
+		case 'filepath': {
+			// Handle file path (supports expressions)
+			const filePath = this.getNodeParameter('filePath', itemIndex, '') as string;
+			if (!filePath) {
+				throw new Error('Please provide a file path to the PDF');
+			}
+			
+			try {
+				pdfBuffer = fs.readFileSync(filePath);
+				fileName = filePath.split('/').pop() || 'file.pdf';
+			} catch (error) {
+				throw new Error(`Failed to read file from path "${filePath}": ${error instanceof Error ? error.message : String(error)}`);
+			}
+			break;
 		}
 		
-		try {
-			pdfBuffer = fs.readFileSync(pdfFilePath);
-			fileName = pdfFilePath.split('/').pop() || 'uploaded.pdf';
-		} catch (error) {
-			throw new Error(`Failed to read uploaded file: ${error instanceof Error ? error.message : String(error)}`);
+		case 'base64': {
+			// Handle base64 encoded data (supports expressions)
+			const base64Data = this.getNodeParameter('base64Data', itemIndex, '') as string;
+			if (!base64Data) {
+				throw new Error('Please provide base64 encoded PDF data');
+			}
+			
+			try {
+				// Remove data URL prefix if present (data:application/pdf;base64,)
+				const cleanBase64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+				pdfBuffer = Buffer.from(cleanBase64, 'base64');
+				fileName = 'base64.pdf';
+			} catch (error) {
+				throw new Error(`Failed to decode base64 data: ${error instanceof Error ? error.message : String(error)}`);
+			}
+			break;
 		}
-	} else {
-		// Handle binary data from previous node
-		const binaryPropertyName = this.getNodeParameter('binaryPropertyName', itemIndex, 'data') as string;
 		
-		try {
-			binaryData = this.helpers.assertBinaryData(itemIndex, binaryPropertyName);
-			pdfBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, binaryPropertyName);
-			fileName = binaryData.fileName || 'unknown.pdf';
-		} catch (error) {
-			throw new Error(
-				`PDF file required: No binary data found with property name "${binaryPropertyName}". ` +
-				'Connect a node that provides PDF data (like HTTP Request for file upload, ' +
-				'Read Binary File, or Google Drive) or switch to "Upload File" input method.'
-			);
+		case 'binary':
+		default: {
+			// Handle binary data from previous node (supports expressions for property name)
+			const binaryPropertyName = this.getNodeParameter('binaryPropertyName', itemIndex, 'data') as string;
+			
+			try {
+				binaryData = this.helpers.assertBinaryData(itemIndex, binaryPropertyName);
+				pdfBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, binaryPropertyName);
+				fileName = binaryData.fileName || 'binary.pdf';
+			} catch (error) {
+				throw new Error(
+					`PDF file required: No binary data found with property name "${binaryPropertyName}". ` +
+					'Connect a node that provides PDF data (like HTTP Request, Read Binary File, etc.) ' +
+					'or switch to "File Path" or "Base64 Data" input method.'
+				);
+			}
+			break;
 		}
 	}
 

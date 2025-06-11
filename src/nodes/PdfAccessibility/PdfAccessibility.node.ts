@@ -153,31 +153,53 @@ export class PdfAccessibility implements INodeType {
 				displayName: 'Input Method',
 				name: 'inputMethod',
 				type: 'options',
+				noDataExpression: true,
 				options: [
 					{
 						name: 'Binary Data from Previous Node',
 						value: 'binary',
-						description: 'Use PDF from previous node (HTTP Request, Read Binary File, etc.)',
+						description: 'Use PDF binary data from previous node',
 					},
 					{
-						name: 'Upload File',
-						value: 'upload',
-						description: 'Upload a PDF file directly in this node',
+						name: 'File Path (Local/Network)',
+						value: 'filepath',
+						description: 'Provide file path to PDF (supports expressions)',
+					},
+					{
+						name: 'Base64 Encoded Data',
+						value: 'base64',
+						description: 'Provide PDF as base64 encoded string',
 					},
 				],
 				default: 'binary',
 				description: 'Choose how to provide the PDF file',
 			},
 			{
-				displayName: 'PDF File Path',
-				name: 'pdfFile',
+				displayName: 'File Path',
+				name: 'filePath',
 				type: 'string',
 				default: '',
-				placeholder: '/path/to/your/file.pdf',
-				description: 'Full path to the PDF file on your system',
+				placeholder: '/path/to/file.pdf or {{$json.filePath}}',
+				description: 'Full path to PDF file. Supports expressions and variables.',
 				displayOptions: {
 					show: {
-						inputMethod: ['upload'],
+						inputMethod: ['filepath'],
+					},
+				},
+			},
+			{
+				displayName: 'Base64 Data',
+				name: 'base64Data',
+				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
+				default: '',
+				placeholder: 'JVBERi0xLjQK... or {{$json.pdfBase64}}',
+				description: 'PDF file as base64 encoded string. Supports expressions.',
+				displayOptions: {
+					show: {
+						inputMethod: ['base64'],
 					},
 				},
 			},
@@ -186,7 +208,8 @@ export class PdfAccessibility implements INodeType {
 				name: 'binaryPropertyName',
 				type: 'string',
 				default: 'data',
-				description: 'Name of the binary property containing the PDF file',
+				placeholder: 'data or {{$json.propertyName}}',
+				description: 'Name of the binary property containing PDF. Supports expressions.',
 				displayOptions: {
 					show: {
 						inputMethod: ['binary'],
