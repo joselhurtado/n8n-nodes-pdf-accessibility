@@ -5,6 +5,7 @@ import {
 	INodeTypeDescription,
 	NodeApiError,
 	NodeOperationError,
+	NodeConnectionType,
 } from 'n8n-workflow';
 
 import { validatePdf } from './operations/validatePdf';
@@ -12,6 +13,8 @@ import { analyzePdf } from './operations/analyzePdf';
 import { remediatePdf } from './operations/remediatePdf';
 import { generateReport } from './operations/generateReport';
 import { SUPPORTED_LANGUAGES } from './config';
+import { LLMProviderFactory, LLMProviderType } from './providers';
+import { PdfValidationResult, AccessibilityAnalysis } from './interfaces';
 
 export class PdfAccessibility implements INodeType {
 	description: INodeTypeDescription = {
@@ -25,8 +28,8 @@ export class PdfAccessibility implements INodeType {
 		defaults: {
 			name: 'PDF Accessibility',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionType.Main],
+		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
 				name: 'anthropicApi',
@@ -34,11 +37,77 @@ export class PdfAccessibility implements INodeType {
 				displayOptions: {
 					show: {
 						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['anthropic'],
+					},
+				},
+			},
+			{
+				name: 'openAIApi',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['openai'],
+					},
+				},
+			},
+			{
+				name: 'googleApi',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['google'],
+					},
+				},
+			},
+			{
+				name: 'customApi',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['custom'],
 					},
 				},
 			},
 		],
 		properties: [
+			{
+				displayName: 'LLM Provider',
+				name: 'llmProvider',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Anthropic (Claude)',
+						value: 'anthropic',
+						description: 'Use Anthropic Claude models for analysis',
+					},
+					{
+						name: 'OpenAI (GPT)',
+						value: 'openai',
+						description: 'Use OpenAI GPT models for analysis',
+					},
+					{
+						name: 'Google (Gemini)',
+						value: 'google',
+						description: 'Use Google Gemini models for analysis',
+					},
+					{
+						name: 'Custom API',
+						value: 'custom',
+						description: 'Use a custom LLM API endpoint',
+					},
+				],
+				default: 'anthropic',
+				description: 'Choose your preferred LLM provider for accessibility analysis',
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+					},
+				},
+			},
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -153,16 +222,96 @@ export class PdfAccessibility implements INodeType {
 						description: 'Best for complex analysis (recommended)',
 					},
 					{
-						name: 'Claude 3 Haiku',
-						value: 'claude-3-haiku-20240307',
+						name: 'Claude 3.5 Haiku',
+						value: 'claude-3-5-haiku-20241022',
 						description: 'Faster and more cost-effective',
+					},
+					{
+						name: 'Claude 3 Opus',
+						value: 'claude-3-opus-20240229',
+						description: 'Most capable for complex analysis',
 					},
 				],
 				default: 'claude-3-5-sonnet-20241022',
-				description: 'AI model to use for accessibility analysis',
+				description: 'Anthropic Claude model to use for analysis',
 				displayOptions: {
 					show: {
 						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['anthropic'],
+					},
+				},
+			},
+			{
+				displayName: 'AI Model',
+				name: 'model',
+				type: 'options',
+				options: [
+					{
+						name: 'GPT-4 Turbo',
+						value: 'gpt-4-turbo-preview',
+						description: 'Latest GPT-4 with improved capabilities',
+					},
+					{
+						name: 'GPT-4',
+						value: 'gpt-4',
+						description: 'Standard GPT-4 model',
+					},
+					{
+						name: 'GPT-3.5 Turbo',
+						value: 'gpt-3.5-turbo',
+						description: 'Faster and more cost-effective',
+					},
+				],
+				default: 'gpt-4-turbo-preview',
+				description: 'OpenAI model to use for analysis',
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['openai'],
+					},
+				},
+			},
+			{
+				displayName: 'AI Model',
+				name: 'model',
+				type: 'options',
+				options: [
+					{
+						name: 'Gemini 1.5 Pro',
+						value: 'gemini-1.5-pro-latest',
+						description: 'Latest and most capable Gemini model',
+					},
+					{
+						name: 'Gemini 1.5 Flash',
+						value: 'gemini-1.5-flash-latest',
+						description: 'Faster Gemini model',
+					},
+					{
+						name: 'Gemini Pro',
+						value: 'gemini-pro',
+						description: 'Standard Gemini model',
+					},
+				],
+				default: 'gemini-1.5-pro-latest',
+				description: 'Google Gemini model to use for analysis',
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['google'],
+					},
+				},
+			},
+			{
+				displayName: 'AI Model',
+				name: 'model',
+				type: 'string',
+				default: '',
+				placeholder: 'your-model-name',
+				description: 'Model name/ID for your custom LLM API',
+				displayOptions: {
+					show: {
+						operation: ['analyzePdf', 'fullWorkflow'],
+						llmProvider: ['custom'],
 					},
 				},
 			},
@@ -352,7 +501,7 @@ export class PdfAccessibility implements INodeType {
 
 					case 'analyzePdf':
 						// Require validation data from previous node
-						const validationInput = items[i].json;
+						const validationInput = items[i].json as unknown as PdfValidationResult;
 						if (!validationInput || !validationInput.extractedText) {
 							throw new NodeOperationError(
 								this.getNode(),
@@ -360,12 +509,12 @@ export class PdfAccessibility implements INodeType {
 								{ itemIndex: i }
 							);
 						}
-						result = await analyzePdf.call(this, i, validationInput as any);
+						result = await analyzePdf.call(this, i, validationInput);
 						break;
 
 					case 'remediatePdf':
 						// Require analysis data from previous node
-						const analysisInput = items[i].json;
+						const analysisInput = items[i].json as unknown as AccessibilityAnalysis;
 						if (!analysisInput || !analysisInput.suggestedTitle) {
 							throw new NodeOperationError(
 								this.getNode(),
@@ -377,7 +526,7 @@ export class PdfAccessibility implements INodeType {
 						const remediationResult = await remediatePdf.call(
 							this, 
 							i, 
-							analysisInput as any, 
+							analysisInput, 
 							binaryInputData.fileName || 'unknown.pdf'
 						);
 						result = remediationResult.result;
@@ -401,9 +550,9 @@ export class PdfAccessibility implements INodeType {
 						result = await generateReport.call(
 							this, 
 							i, 
-							reportInput.validation, 
-							reportInput.analysis, 
-							reportInput.remediation
+							reportInput.validation as unknown as PdfValidationResult, 
+							reportInput.analysis as unknown as AccessibilityAnalysis, 
+							reportInput.remediation as any
 						);
 						break;
 
@@ -460,7 +609,7 @@ export class PdfAccessibility implements INodeType {
 				let outputData: any;
 				switch (outputFormat) {
 					case 'summary':
-						outputData = this.extractSummary(result, operation);
+						outputData = (this as any).extractSummary(result, operation);
 						break;
 					case 'report-only':
 						outputData = operation === 'generateReport' || operation === 'fullWorkflow' 
@@ -482,7 +631,7 @@ export class PdfAccessibility implements INodeType {
 				if (this.continueOnFail()) {
 					returnData.push({
 						json: {
-							error: error.message,
+							error: error instanceof Error ? error.message : String(error),
 							operation: this.getNodeParameter('operation', i),
 							timestamp: new Date().toISOString(),
 						},

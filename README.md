@@ -10,11 +10,12 @@ An N8N community node that provides comprehensive PDF accessibility analysis and
 ## ✨ Features
 
 - 📋 **PDF Validation** - Comprehensive file validation with customizable limits
-- 🔍 **AI-Powered Analysis** - Intelligent accessibility analysis using Claude AI
+- 🔍 **AI-Powered Analysis** - Intelligent accessibility analysis using multiple LLM providers (Anthropic, OpenAI, Google, Custom APIs)
 - 🔧 **Automated Remediation** - Apply accessibility improvements automatically
 - 📊 **Detailed Reporting** - Generate professional HTML and text reports
 - 🎯 **WCAG Compliance** - Target A, AA, or AAA compliance levels
 - 🌐 **Multi-language Support** - Support for major European languages
+- 🤖 **Multi-LLM Support** - Choose from Anthropic Claude, OpenAI GPT, Google Gemini, or custom APIs
 - 🔄 **Flexible Workflows** - Use individual operations or complete workflow
 
 ## 🚀 Installation
@@ -23,7 +24,7 @@ An N8N community node that provides comprehensive PDF accessibility analysis and
 
 - N8N version 0.198.0 or later
 - Node.js 18+ 
-- Anthropic API key for AI analysis
+- API key for your chosen LLM provider (Anthropic, OpenAI, Google, or Custom)
 
 ### Method 1: N8N Community Nodes
 
@@ -52,16 +53,39 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-accessibilit
 
 ## 🛠️ Setup
 
-### 1. Configure Anthropic API Credentials
+### 1. Configure LLM Provider Credentials
 
+Choose your preferred LLM provider and configure credentials:
+
+#### Anthropic (Claude)
 1. Go to **Credentials** in your N8N interface
 2. Click **Add Credential** → **Anthropic API**
 3. Enter your API key from [Anthropic Console](https://console.anthropic.com/)
 4. Test the connection
 
+#### OpenAI (GPT)
+1. Go to **Credentials** in your N8N interface
+2. Click **Add Credential** → **OpenAI API**
+3. Enter your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+4. Optionally set organization ID and custom base URL
+5. Test the connection
+
+#### Google (Gemini)
+1. Go to **Credentials** in your N8N interface
+2. Click **Add Credential** → **Google API**
+3. Enter your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+4. Test the connection
+
+#### Custom API
+1. Go to **Credentials** in your N8N interface
+2. Click **Add Credential** → **Custom API**
+3. Enter your API key, base URL, and configure authentication
+4. Choose API format (OpenAI-compatible, Anthropic-compatible, or Custom)
+5. Test the connection
+
 ### 2. Node Configuration
 
-The PDF Accessibility node offers five operation modes:
+The PDF Accessibility node offers five operation modes with flexible LLM provider selection:
 
 #### 🔍 **Validate PDF**
 Basic validation and content analysis
@@ -70,7 +94,8 @@ Basic validation and content analysis
 - Text extraction and analysis
 
 #### 🧠 **Analyze Accessibility** 
-AI-powered accessibility analysis
+AI-powered accessibility analysis with multiple LLM options
+- Choose from Anthropic Claude, OpenAI GPT, Google Gemini, or custom APIs
 - WCAG compliance assessment
 - Improvement recommendations
 - Compliance scoring
@@ -111,7 +136,36 @@ Complete end-to-end processing
 ```json
 {
   "operation": "fullWorkflow",
+  "llmProvider": "anthropic",
   "model": "claude-3-5-sonnet-20241022",
+  "wcagLevel": "AA",
+  "autoTitle": true,
+  "setLanguage": "en-US",
+  "reportFormat": "both"
+}
+```
+
+### OpenAI Example
+
+```json
+{
+  "operation": "fullWorkflow",
+  "llmProvider": "openai",
+  "model": "gpt-4-turbo-preview",
+  "wcagLevel": "AA",
+  "autoTitle": true,
+  "setLanguage": "en-US",
+  "reportFormat": "both"
+}
+```
+
+### Google Gemini Example
+
+```json
+{
+  "operation": "fullWorkflow",
+  "llmProvider": "google",
+  "model": "gemini-1.5-pro-latest",
   "wcagLevel": "AA",
   "autoTitle": true,
   "setLanguage": "en-US",
@@ -137,7 +191,8 @@ HTTP Request (Upload) → Split in Batches → PDF Accessibility → Merge
 - **Minimum Text Length**: Required characters (default: 100)
 
 ### AI Analysis Options
-- **AI Model**: Claude 3.5 Sonnet (recommended) or Claude 3 Haiku (faster)
+- **LLM Provider**: Choose between Anthropic, OpenAI, Google, or Custom API
+- **AI Model**: Provider-specific models (Claude 3.5 Sonnet, GPT-4 Turbo, Gemini 1.5 Pro, etc.)
 - **WCAG Level**: A, AA (recommended), or AAA
 - **Analysis Depth**: Standard or comprehensive
 
@@ -246,10 +301,14 @@ PDF Accessibility (Full Workflow) → [Success] Email Results
 - **Batch Size**: Recommended 10 documents per batch
 
 ### AI Analysis
-- Requires Anthropic API key and credits
-- Processing cost: ~$0.10-0.30 per document
+- Requires API key and credits for chosen LLM provider
+- Processing cost varies by provider:
+  - Anthropic Claude: ~$0.10-0.30 per document
+  - OpenAI GPT: ~$0.05-0.25 per document
+  - Google Gemini: ~$0.03-0.20 per document
+  - Custom APIs: Varies by provider
 - Internet connection required
-- Rate limits apply (see Anthropic documentation)
+- Rate limits apply (see respective provider documentation)
 
 ## 🔒 Security & Privacy
 
@@ -269,9 +328,10 @@ PDF Accessibility (Full Workflow) → [Success] Email Results
 - Verify PDF contains readable text
 
 **"AI API Error"**
-- Verify Anthropic API credentials
-- Check API quota and billing
+- Verify your LLM provider API credentials
+- Check API quota and billing status
 - Ensure internet connectivity
+- Verify the selected model is available for your account
 
 **"Remediation failed"**
 - PDF may have security restrictions
@@ -329,11 +389,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [N8N](https://n8n.io/) for the amazing automation platform
 - [Anthropic](https://anthropic.com/) for Claude AI capabilities
+- [OpenAI](https://openai.com/) for GPT model access
+- [Google](https://ai.google.dev/) for Gemini AI capabilities
 - [PDF-lib](https://pdf-lib.js.org/) for PDF manipulation
 - The accessibility community for WCAG guidelines
 
 ## 📈 Roadmap
 
+- [x] Multi-LLM provider support (Anthropic, OpenAI, Google, Custom)
 - [ ] Advanced structure tagging
 - [ ] Color contrast analysis
 - [ ] Image OCR and alt-text generation
@@ -342,6 +405,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Custom compliance templates
 - [ ] Batch processing optimization
 - [ ] Real-time collaboration features
+- [ ] Local LLM support (Ollama, etc.)
+- [ ] Fine-tuned accessibility models
 
 ---
 

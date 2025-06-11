@@ -1,4 +1,4 @@
-import * as pdfParse from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { PdfValidationResult, PdfAccessibilityError } from '../interfaces';
 import { PDF_LIMITS, ERROR_MESSAGES } from '../config';
@@ -37,7 +37,7 @@ export class PdfUtils {
 			const pageCount = pdfData.numpages;
 			const textContent = pdfData.text || '';
 			const textLength = textContent.length;
-			const wordCount = textContent.split(/\s+/).filter(word => word.length > 0).length;
+			const wordCount = textContent.split(/\s+/).filter((word: string) => word.length > 0).length;
 
 			// Validation checks
 			const hasText = textLength >= minTextLength;
