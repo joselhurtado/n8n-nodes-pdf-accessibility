@@ -355,7 +355,7 @@ export N8N_LOG_LEVEL=debug
 1. 📚 Check the [documentation](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/wiki)
 2. 🐛 Report issues on [GitHub](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues)
 3. 💬 Join the [N8N Community](https://community.n8n.io/)
-4. 📧 Email support: [your-email@domain.com](mailto:your-email@domain.com)
+4. 📧 Email support: [hello@hurtadojose.com](mailto:hello@hurtadojose.com)
 
 ## 🤝 Contributing
 

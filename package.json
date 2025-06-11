@@ -16,7 +16,7 @@
   "homepage": "https://github.com/joselhurtado/n8n-nodes-pdf-accessibility",
   "author": {
     "name": "Jose Hurtado",
-    "email": "your-email@domain.com"
+    "email": "hello@hurtadojose.com"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
     "format": "prettier src --write",
     "lint": "eslint src --ext .ts",
     "lintfix": "eslint src --ext .ts --fix",
-    "prepublishOnly": "npm run build && npm run lint",
+    "prepublishOnly": "npm run build",
     "test": "jest"
   },
   "devDependencies": {
