@@ -25,7 +25,7 @@ export class PdfAccessibility implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Analyze and remediate PDF documents for WCAG accessibility compliance. Requires PDF file as binary input.',
+		description: 'Analyze and remediate PDF documents for WCAG accessibility compliance with flexible input options.',
 		defaults: {
 			name: 'PDF Accessibility',
 		},
@@ -116,31 +116,31 @@ export class PdfAccessibility implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: '✅ Validate PDF',
+						name: 'Validate PDF',
 						value: 'validatePdf',
 						description: 'Validate PDF file for accessibility processing',
 						action: 'Validate a PDF file',
 					},
 					{
-						name: '🔍 Analyze Accessibility',
+						name: 'Analyze Accessibility',
 						value: 'analyzePdf',
 						description: 'Analyze PDF for WCAG compliance issues using AI',
 						action: 'Analyze PDF accessibility',
 					},
 					{
-						name: '🔧 Remediate PDF',
+						name: 'Remediate PDF',
 						value: 'remediatePdf',
 						description: 'Apply accessibility improvements to PDF',
 						action: 'Remediate PDF accessibility',
 					},
 					{
-						name: '📊 Generate Report',
+						name: 'Generate Report',
 						value: 'generateReport',
 						description: 'Generate detailed accessibility report',
 						action: 'Generate accessibility report',
 					},
 					{
-						name: '⚡ Full Workflow',
+						name: 'Full Workflow',
 						value: 'fullWorkflow',
 						description: 'Complete validation, analysis, and remediation',
 						action: 'Run full accessibility workflow',
@@ -154,7 +154,6 @@ export class PdfAccessibility implements INodeType {
 				displayName: 'Input Method',
 				name: 'inputMethod',
 				type: 'options',
-				noDataExpression: true,
 				options: [
 					{
 						name: 'Binary Data from Previous Node',
