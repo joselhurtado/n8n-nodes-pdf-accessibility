@@ -1,4 +1,4 @@
-# n8n-nodes-pdf-remediation
+# n8n-nodes-pdf-accessibility
 
 ![PDF Accessibility](https://img.shields.io/badge/PDF-Accessibility-blue)
 ![N8N Community Node](https://img.shields.io/badge/n8n-community--node-ff6d5a)
@@ -28,7 +28,7 @@ An N8N community node that provides comprehensive PDF accessibility analysis and
 ### Method 1: N8N Community Nodes
 
 1. In your N8N instance, go to **Settings → Community Nodes**
-2. Install package: `n8n-nodes-pdf-remediation`
+2. Install package: `n8n-nodes-pdf-accessibility`
 3. Restart N8N
 
 ### Method 2: Manual Installation
@@ -38,7 +38,7 @@ An N8N community node that provides comprehensive PDF accessibility analysis and
 cd ~/.n8n/nodes
 
 # Install the package
-npm install n8n-nodes-pdf-remediation
+npm install n8n-nodes-pdf-accessibility
 
 # Restart N8N
 ```
@@ -47,7 +47,7 @@ npm install n8n-nodes-pdf-remediation
 
 ```bash
 # Add to your Dockerfile
-RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-remediation
+RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-pdf-accessibility
 ```
 
 ## 🛠️ Setup
@@ -292,8 +292,8 @@ export N8N_LOG_LEVEL=debug
 
 ### Getting Help
 
-1. 📚 Check the [documentation](https://github.com/joselhurtado/n8n-nodes-pdf-remediation/wiki)
-2. 🐛 Report issues on [GitHub](https://github.com/joselhurtado/n8n-nodes-pdf-remediation/issues)
+1. 📚 Check the [documentation](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/wiki)
+2. 🐛 Report issues on [GitHub](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues)
 3. 💬 Join the [N8N Community](https://community.n8n.io/)
 4. 📧 Email support: [your-email@domain.com](mailto:your-email@domain.com)
 
@@ -305,8 +305,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/joselhurtado/n8n-nodes-pdf-remediation.git
-cd n8n-nodes-pdf-remediation
+git clone https://github.com/joselhurtado/n8n-nodes-pdf-accessibility.git
+cd n8n-nodes-pdf-accessibility
 
 # Install dependencies
 npm install

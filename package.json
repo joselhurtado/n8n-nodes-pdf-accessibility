@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-pdf-remediation",
+  "name": "n8n-nodes-pdf-accessibility",
   "version": "1.0.0",
   "description": "N8N community node for PDF accessibility remediation and WCAG compliance analysis",
   "keywords": [
@@ -13,14 +13,14 @@
     "document-processing"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/joselhurtado/n8n-nodes-pdf-remediation",
+  "homepage": "https://github.com/joselhurtado/n8n-nodes-pdf-accessibility",
   "author": {
     "name": "Jose Hurtado",
     "email": "your-email@domain.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/joselhurtado/n8n-nodes-pdf-remediation.git"
+    "url": "https://github.com/joselhurtado/n8n-nodes-pdf-accessibility.git"
   },
   "engines": {
     "node": ">=18.10",
