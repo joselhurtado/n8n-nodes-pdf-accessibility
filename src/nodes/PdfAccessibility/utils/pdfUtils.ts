@@ -1,5 +1,5 @@
 import pdfParse from 'pdf-parse';
-import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { PdfValidationResult, PdfAccessibilityError } from '../interfaces';
 import { PDF_LIMITS, ERROR_MESSAGES } from '../config';
 
@@ -134,7 +134,7 @@ export class PdfUtils {
 
 			// Apply additional metadata
 			if (improvements.metadata) {
-				Object.entries(improvements.metadata).forEach(([key, value]) => {
+				Object.entries(improvements.metadata).forEach(([_key, _value]) => {
 					// Note: pdf-lib has limited metadata support
 					// For full accessibility tagging, additional libraries would be needed
 				});
@@ -170,14 +170,14 @@ export class PdfUtils {
 	 */
 	private static detectNonRomanChars(text: string): boolean {
 		// Basic check for common non-Roman scripts
-		const nonRomanPattern = /[^\x00-\x7F\u00C0-\u017F\u0100-\u017F]/;
+		const nonRomanPattern = /[^\u0020-\u007F\u00C0-\u017F\u0100-\u017F]/;
 		return nonRomanPattern.test(text);
 	}
 
 	/**
 	 * Extracts images and their positions from PDF (placeholder)
 	 */
-	static async extractImages(pdfBuffer: Buffer): Promise<Array<{ page: number; bbox: number[] }>> {
+	static async extractImages(_pdfBuffer: Buffer): Promise<Array<{ page: number; bbox: number[] }>> {
 		// This is a placeholder - full image extraction requires additional libraries
 		// like pdf2pic or pdf-poppler for complete implementation
 		return [];

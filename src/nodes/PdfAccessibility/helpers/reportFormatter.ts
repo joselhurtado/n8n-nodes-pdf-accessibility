@@ -1,4 +1,4 @@
-import { AccessibilityReport, AccessibilityAnalysis, PdfValidationResult, RemediationResult } from '../interfaces';
+import { AccessibilityReport, AccessibilityAnalysis, PdfValidationResult } from '../interfaces';
 import { PdfUtils } from '../utils/pdfUtils';
 
 export class ReportFormatter {

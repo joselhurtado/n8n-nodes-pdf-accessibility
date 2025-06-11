@@ -14,7 +14,6 @@ import { remediatePdf } from './operations/remediatePdf';
 import { generateReport } from './operations/generateReport';
 import { getPdfInput } from './utils/inputUtils';
 import { SUPPORTED_LANGUAGES } from './config';
-import { LLMProviderFactory, LLMProviderType } from './providers';
 import { PdfValidationResult, AccessibilityAnalysis } from './interfaces';
 
 export class PdfAccessibility implements INodeType {
@@ -25,7 +24,8 @@ export class PdfAccessibility implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Analyze and remediate PDF documents for WCAG accessibility compliance with flexible input options.',
+		description:
+			'Analyze and remediate PDF documents for WCAG accessibility compliance with flexible input options.',
 		defaults: {
 			name: 'PDF Accessibility',
 		},
@@ -226,7 +226,13 @@ export class PdfAccessibility implements INodeType {
 				description: 'Maximum allowed file size in megabytes',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
+						operation: [
+							'validatePdf',
+							'analyzePdf',
+							'remediatePdf',
+							'generateReport',
+							'fullWorkflow',
+						],
 					},
 				},
 			},
@@ -238,7 +244,13 @@ export class PdfAccessibility implements INodeType {
 				description: 'Maximum number of pages allowed',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
+						operation: [
+							'validatePdf',
+							'analyzePdf',
+							'remediatePdf',
+							'generateReport',
+							'fullWorkflow',
+						],
 					},
 				},
 			},
@@ -250,7 +262,13 @@ export class PdfAccessibility implements INodeType {
 				description: 'Whether to allow scanned documents (lower accuracy)',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
+						operation: [
+							'validatePdf',
+							'analyzePdf',
+							'remediatePdf',
+							'generateReport',
+							'fullWorkflow',
+						],
 					},
 				},
 			},
@@ -262,7 +280,13 @@ export class PdfAccessibility implements INodeType {
 				description: 'Whether to allow documents with fillable forms',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
+						operation: [
+							'validatePdf',
+							'analyzePdf',
+							'remediatePdf',
+							'generateReport',
+							'fullWorkflow',
+						],
 					},
 				},
 			},
@@ -274,7 +298,13 @@ export class PdfAccessibility implements INodeType {
 				description: 'Minimum number of characters required for text content',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
+						operation: [
+							'validatePdf',
+							'analyzePdf',
+							'remediatePdf',
+							'generateReport',
+							'fullWorkflow',
+						],
 					},
 				},
 			},
@@ -431,7 +461,7 @@ export class PdfAccessibility implements INodeType {
 				displayName: 'Document Language',
 				name: 'setLanguage',
 				type: 'options',
-				options: SUPPORTED_LANGUAGES.map(lang => ({
+				options: SUPPORTED_LANGUAGES.map((lang) => ({
 					name: lang.name,
 					value: lang.value,
 				})),
@@ -561,14 +591,14 @@ export class PdfAccessibility implements INodeType {
 				const outputFormat = this.getNodeParameter('outputFormat', i, 'complete') as string;
 
 				let result: any = {};
-				let binaryData: any = {};
+				const binaryData: any = {};
 
 				switch (operation) {
 					case 'validatePdf':
 						result = await validatePdf.call(this, i);
 						break;
 
-					case 'analyzePdf':
+					case 'analyzePdf': {
 						// Can work standalone or with validation data from previous node
 						const validationInput = items[i].json as unknown as PdfValidationResult;
 						if (validationInput && validationInput.extractedText) {
@@ -579,8 +609,9 @@ export class PdfAccessibility implements INodeType {
 							result = await analyzePdf.call(this, i);
 						}
 						break;
+					}
 
-					case 'remediatePdf':
+					case 'remediatePdf': {
 						// Can work standalone or with analysis data from previous node
 						const analysisInput = items[i].json as unknown as AccessibilityAnalysis;
 						let remediationResult;
@@ -588,10 +619,10 @@ export class PdfAccessibility implements INodeType {
 							// Use analysis data from previous node
 							const binaryInputData = this.helpers.assertBinaryData(i, 'data');
 							remediationResult = await remediatePdf.call(
-								this, 
-								i, 
-								analysisInput, 
-								binaryInputData.fileName || 'unknown.pdf'
+								this,
+								i,
+								analysisInput,
+								binaryInputData.fileName || 'unknown.pdf',
 							);
 						} else {
 							// Perform validation, analysis, and remediation directly
@@ -604,47 +635,50 @@ export class PdfAccessibility implements INodeType {
 							fileName: result.remediatedFileName,
 						};
 						break;
+					}
 
-					case 'generateReport':
+					case 'generateReport': {
 						// Can work standalone or with validation and analysis data from previous steps
 						const reportInput = items[i].json;
 						if (reportInput && reportInput.validation && reportInput.analysis) {
 							// Use data from previous steps
 							result = await generateReport.call(
-								this, 
-								i, 
-								reportInput.validation as unknown as PdfValidationResult, 
-								reportInput.analysis as unknown as AccessibilityAnalysis, 
-								reportInput.remediation as any
+								this,
+								i,
+								reportInput.validation as unknown as PdfValidationResult,
+								reportInput.analysis as unknown as AccessibilityAnalysis,
+								reportInput.remediation as any,
 							);
 						} else {
 							// Perform validation, analysis, and generate report directly
 							result = await generateReport.call(this, i);
 						}
 						break;
+					}
 
-					case 'fullWorkflow':
+					case 'fullWorkflow': {
 						// Execute complete workflow
 						const validation = await validatePdf.call(this, i);
-						
+
 						if (!validation.valid) {
 							throw new NodeOperationError(
 								this.getNode(),
 								`PDF validation failed: ${validation.error || 'Unknown validation error'}`,
-								{ itemIndex: i }
+								{ itemIndex: i },
 							);
 						}
 
 						const analysis = await analyzePdf.call(this, i, validation);
-						
-						const remediation = await remediatePdf.call(
-							this, 
-							i, 
-							analysis, 
-							validation.fileName
-						);
 
-						const report = await generateReport.call(this, i, validation, analysis, remediation.result);
+						const remediation = await remediatePdf.call(this, i, analysis, validation.fileName);
+
+						const report = await generateReport.call(
+							this,
+							i,
+							validation,
+							analysis,
+							remediation.result,
+						);
 
 						// Combine all results
 						result = {
@@ -669,6 +703,7 @@ export class PdfAccessibility implements INodeType {
 							fileName: remediation.result.remediatedFileName,
 						};
 						break;
+					}
 
 					default:
 						throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, {
@@ -683,9 +718,10 @@ export class PdfAccessibility implements INodeType {
 						outputData = (this as any).extractSummary(result, operation);
 						break;
 					case 'report-only':
-						outputData = operation === 'generateReport' || operation === 'fullWorkflow' 
-							? result.report || result 
-							: result;
+						outputData =
+							operation === 'generateReport' || operation === 'fullWorkflow'
+								? result.report || result
+								: result;
 						break;
 					case 'complete':
 					default:
@@ -697,7 +733,6 @@ export class PdfAccessibility implements INodeType {
 					json: outputData,
 					binary: Object.keys(binaryData).length > 0 ? binaryData : items[i].binary,
 				});
-
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({
@@ -710,11 +745,11 @@ export class PdfAccessibility implements INodeType {
 					});
 					continue;
 				}
-				
+
 				if (error instanceof NodeApiError || error instanceof NodeOperationError) {
 					throw error;
 				}
-				
+
 				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
 			}
 		}
@@ -722,6 +757,7 @@ export class PdfAccessibility implements INodeType {
 		return [returnData];
 	}
 
+	// @ts-expect-error - This method is used via type cast in execute method
 	private extractSummary(result: any, operation: string): any {
 		switch (operation) {
 			case 'validatePdf':
@@ -767,14 +803,14 @@ export class PdfAccessibility implements INodeType {
 	private getValidationIssues(validation: any): string[] {
 		const issues: string[] = [];
 		const details = validation.validationDetails || {};
-		
+
 		if (!details.fileSize) issues.push('File size exceeds limit');
 		if (!details.pageCount) issues.push('Too many pages');
 		if (!details.hasReadableText) issues.push('No readable text content');
 		if (!details.notScanned) issues.push('Appears to be scanned document');
 		if (!details.noForms) issues.push('Contains fillable forms');
 		if (!details.romanCharsOnly) issues.push('Contains non-Roman characters');
-		
+
 		return issues;
 	}
 }

@@ -2,7 +2,7 @@ import { IExecuteFunctions } from 'n8n-workflow';
 import { PdfUtils } from '../utils/pdfUtils';
 import { AiUtils } from '../utils/aiUtils';
 import { getPdfInput } from '../utils/inputUtils';
-import { AccessibilityAnalysis, RemediationResult, PdfValidationResult } from '../interfaces';
+import { AccessibilityAnalysis, RemediationResult } from '../interfaces';
 import { LLMProviderType } from '../providers';
 
 export async function remediatePdf(
