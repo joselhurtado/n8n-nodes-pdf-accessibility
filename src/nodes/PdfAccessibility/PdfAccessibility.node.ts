@@ -174,11 +174,6 @@ export class PdfAccessibility implements INodeType {
 				],
 				default: 'binary',
 				description: 'Choose how to provide the PDF file',
-				displayOptions: {
-					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
-					},
-				},
 			},
 			{
 				displayName: 'File Path',
@@ -189,7 +184,6 @@ export class PdfAccessibility implements INodeType {
 				description: 'Full path to PDF file. Supports expressions and variables.',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
 						inputMethod: ['filepath'],
 					},
 				},
@@ -206,7 +200,6 @@ export class PdfAccessibility implements INodeType {
 				description: 'PDF file as base64 encoded string. Supports expressions.',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
 						inputMethod: ['base64'],
 					},
 				},
@@ -220,7 +213,6 @@ export class PdfAccessibility implements INodeType {
 				description: 'Name of the binary property containing PDF. Supports expressions.',
 				displayOptions: {
 					show: {
-						operation: ['validatePdf', 'analyzePdf', 'remediatePdf', 'generateReport', 'fullWorkflow'],
 						inputMethod: ['binary'],
 					},
 				},
