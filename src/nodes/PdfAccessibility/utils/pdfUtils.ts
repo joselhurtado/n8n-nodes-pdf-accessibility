@@ -27,24 +27,53 @@ export class PdfUtils {
 		} = options;
 
 		try {
+			console.log('=== PDF VALIDATION DEBUG ===');
+			console.log('PDF Buffer length:', pdfBuffer.length);
+			console.log('Max file size:', maxFileSize);
+			console.log('File name:', fileName);
+			console.log('PDF Buffer first 20 bytes:', pdfBuffer.slice(0, 20));
+			console.log('PDF header check:', pdfBuffer.slice(0, 8).toString());
+			
 			// Basic file validation
 			if (pdfBuffer.length > maxFileSize) {
+				console.log('❌ File too large');
 				throw new Error(PdfAccessibilityError.FILE_TOO_LARGE);
 			}
 
+			console.log('✅ File size OK, attempting PDF parse...');
+			
 			// Parse PDF
 			const pdfData = await pdfParse(pdfBuffer);
+			console.log('✅ PDF parse successful');
 			const pageCount = pdfData.numpages;
 			const textContent = pdfData.text || '';
 			const textLength = textContent.length;
 			const wordCount = textContent.split(/\s+/).filter((word: string) => word.length > 0).length;
+			
+			console.log('PDF Data extracted:');
+			console.log('- Pages:', pageCount);
+			console.log('- Text length:', textLength);
+			console.log('- Word count:', wordCount);
+			console.log('- First 100 chars:', textContent.substring(0, 100));
 
 			// Validation checks
+			console.log('Running validation checks...');
 			const hasText = textLength >= minTextLength;
 			const isScanned = textLength < 50; // Heuristic for scanned documents
 			const tooManyPages = pageCount > maxPages;
+			
+			console.log('Checking form fields...');
 			const hasFormFields = this.detectFormFields(pdfBuffer.toString('binary'));
+			
+			console.log('Checking non-Roman characters...');
 			const hasNonRomanChars = this.detectNonRomanChars(textContent);
+			
+			console.log('Validation results:');
+			console.log('- hasText:', hasText, `(${textLength} >= ${minTextLength})`);
+			console.log('- isScanned:', isScanned);
+			console.log('- tooManyPages:', tooManyPages, `(${pageCount} > ${maxPages})`);
+			console.log('- hasFormFields:', hasFormFields);
+			console.log('- hasNonRomanChars:', hasNonRomanChars);
 
 			// Overall validation
 			const validationDetails = {
@@ -57,6 +86,18 @@ export class PdfUtils {
 			};
 
 			const valid = Object.values(validationDetails).every(check => check);
+			
+			console.log('Final validation details:', validationDetails);
+			console.log('Overall valid:', valid);
+			
+			if (!valid) {
+				console.log('❌ Validation failed. Failed checks:');
+				Object.entries(validationDetails).forEach(([key, value]) => {
+					if (!value) console.log(`  - ${key}: FAILED`);
+				});
+			} else {
+				console.log('✅ All validation checks passed!');
+			}
 
 			return {
 				valid,
@@ -75,6 +116,12 @@ export class PdfUtils {
 			};
 		} catch (error) {
 			// Enhanced error handling with specific error messages
+			console.log('❌ PDF VALIDATION ERROR ===');
+			console.log('Error type:', typeof error);
+			console.log('Error instanceof Error:', error instanceof Error);
+			console.log('Error message:', error instanceof Error ? error.message : String(error));
+			console.log('Error stack:', error instanceof Error ? error.stack : 'No stack');
+			
 			let errorMessage = 'Unknown validation error';
 			
 			if (error instanceof Error) {
@@ -89,6 +136,8 @@ export class PdfUtils {
 					errorMessage = 'Encrypted PDFs are not supported. Please provide an unencrypted PDF.';
 				}
 			}
+			
+			console.log('Final error message:', errorMessage);
 			
 			return {
 				valid: false,
