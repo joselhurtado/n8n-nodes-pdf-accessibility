@@ -1,182 +1,173 @@
 # n8n-nodes-pdf-accessibility
 
-![PDF Accessibility](https://img.shields.io/badge/PDF-Accessibility-blue)
-![N8N Community Node](https://img.shields.io/badge/n8n-community--node-ff6d5a)
-![WCAG 2.1](https://img.shields.io/badge/WCAG-2.1%20AAA-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Version](https://img.shields.io/badge/version-2.0.0-brightgreen)
-![Status](https://img.shields.io/badge/status-Production%20Ready-success)
+![n8n.io - Workflow Automation](https://img.shields.io/badge/n8n.io-Workflow%20Automation-FF6D5A.svg) ![npm](https://img.shields.io/npm/v/n8n-nodes-pdf-accessibility) ![npm](https://img.shields.io/npm/dt/n8n-nodes-pdf-accessibility) ![GitHub](https://img.shields.io/github/license/joselhurtado/n8n-nodes-pdf-accessibility)
 
-**🎯 AI-Powered PDF Accessibility Automation for N8N**
+This is an n8n community node that provides AI-powered PDF accessibility automation. It lets you use WCAG compliance analysis, intelligent remediation, and professional audit reporting in your n8n workflows.
 
-Transform any PDF into a fully accessible, WCAG-compliant document through intelligent automation. This N8N community node provides enterprise-grade accessibility analysis, remediation, and professional audit reporting powered by cutting-edge AI.
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-## 🚀 Version 2.0.0 - Major Release
+## 📦 Installation
 
-**Complete transformation**: From basic analysis tool to comprehensive AI-powered accessibility automation platform.
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-### ✨ **New in v2.0.0**
-- 🤖 **Intelligent Auto-Processing** - AI analyzes content and recommends optimal accessibility improvements
-- 🔧 **5 Complete Accessibility Tools** - Image alt-text, heading structure, table accessibility, link text, and metadata enhancement
-- 📊 **Advanced Reporting Engine** - Professional audit reports with visual diff and multi-format export
-- 🎯 **Enhanced Node Architecture** - Single node with 4 processing modes for maximum flexibility
-- 🏗️ **Production-Ready Framework** - Enterprise-grade tool orchestration and error handling
+### Community Nodes Installation
 
----
+#### Option 1: n8n Cloud & Desktop App
+1. Go to **Settings** → **Community Nodes**
+2. Click **Install** and enter: `n8n-nodes-pdf-accessibility`
+3. Click **Install** and agree to risks
+4. The node will be available after installation
 
-## 🌟 **Core Features**
-
-### 🤖 **AI-Powered Accessibility Tools**
-| Tool | Purpose | WCAG Coverage |
-|------|---------|---------------|
-| **Image Alt-Text** | AI-generated descriptive alt-text for images | 1.1.1 Non-text Content |
-| **Heading Structure** | Document hierarchy optimization | 1.3.1 Info and Relationships |
-| **Table Accessibility** | Header and caption enhancement | 1.3.1 Info and Relationships |
-| **Link Text** | Meaningful link description improvement | 2.4.4 Link Purpose |
-| **Metadata Enhancer** | Comprehensive PDF metadata optimization | 3.1.1 Language of Page |
-
-### 🎯 **Processing Modes**
-1. **🤖 Intelligent Auto-Processing** - AI analyzes and determines optimal workflow automatically
-2. **🔍 Analysis Only** - Comprehensive accessibility analysis without modification
-3. **🔧 Remediation Only** - Apply accessibility improvements with full reporting
-4. **⚙️ Custom Workflow** - User-defined tool selection for specific requirements
-
-### 📊 **Professional Reporting**
-- **Compliance Scoring** - Weighted WCAG A/AA/AAA compliance analysis
-- **Visual Diff System** - Before/after accessibility improvement comparison
-- **Multi-format Export** - JSON, HTML, Markdown, CSV for different use cases
-- **Audit Documentation** - Professional reports for stakeholder presentation
-
----
-
-## 🚀 **Quick Start**
-
-### Installation
-
-#### For N8N Docker Users
-```yaml
-# docker-compose.yml
-environment:
-  - N8N_NODES_INCLUDE=n8n-nodes-pdf-accessibility
-```
-
+#### Option 2: Self-Hosted n8n
 ```bash
-docker-compose down && docker-compose up -d
-```
-
-#### For N8N Local Installation
-```bash
+# Navigate to your n8n installation and install the package
 npm install n8n-nodes-pdf-accessibility
-# Restart N8N after installation
+
+# Restart n8n to load the new nodes
 ```
 
-### Basic Usage
+#### Option 3: Docker
+```bash
+# Pull docker image with community node pre-installed
+docker pull n8nio/n8n
 
-1. **Add the node** to your N8N workflow
-2. **Choose processing mode**:
-   - `Intelligent Auto-Processing` for full automation
-   - `Analysis Only` to understand accessibility issues
-   - `Remediation Only` to apply improvements
-   - `Custom Workflow` for specific tool selection
-3. **Configure input method** (Binary, URL, File Path, or Base64)
-4. **Set WCAG compliance level** (A, AA, or AAA)
-5. **Execute** and receive comprehensive accessibility report
-
----
-
-## 📖 **Detailed Usage**
-
-### Enhanced Node Configuration
-
-#### **Processing Mode Selection**
-```javascript
-// Intelligent Auto-Processing
-{
-  "mode": "auto",
-  "wcagLevel": "AA",
-  "llmProvider": "auto"  // AI selects best provider
-}
-
-// Analysis Only
-{
-  "mode": "analyze", 
-  "wcagLevel": "AA",
-  "advancedSettings": {
-    "depth": "full"  // Quick fixes | Comprehensive | Deep analysis
-  }
-}
-
-// Custom Workflow
-{
-  "mode": "custom",
-  "customOperations": [
-    "alttext",     // Image alt-text generation
-    "headings",    // Heading structure optimization
-    "tables",      // Table accessibility
-    "links",       // Link text improvement
-    "metadata"     // PDF metadata enhancement
-  ]
-}
+# Or install in existing container
+docker exec <container-id> npm install n8n-nodes-pdf-accessibility
+docker restart <container-id>
 ```
 
-#### **Input Methods**
-The node supports flexible PDF input:
+## 🚀 Operations
 
-1. **📁 Binary Data** - From previous nodes with intelligent format detection
-2. **🌐 URL Download** - Direct download from URLs (including Google Drive)
-3. **🔗 File Path** - Direct file system access
-4. **📄 Base64** - Encoded PDF data
+This package provides two powerful nodes:
 
-#### **Advanced Settings**
-```javascript
-{
-  "advancedSettings": {
-    "depth": "full",              // Processing depth
-    "language": "en",             // Document language
-    "outputFormat": ["pdf", "report", "summary", "log"],
-    "debug": true,                // Enable detailed logging
-    "showCostEstimate": true      // Show LLM cost estimates
-  }
-}
+### PDF Accessibility Enhanced Node
+The main node offering intelligent PDF accessibility automation with four processing modes:
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| **Auto** | AI analyzes content and applies optimal accessibility improvements | Complete automation for unknown documents |
+| **Analyze** | Comprehensive accessibility analysis without modification | Understanding issues before improvements |
+| **Remediate** | Apply accessibility improvements with detailed reporting | Batch processing of analyzed documents |
+| **Custom** | Select specific accessibility tools for targeted improvements | Focused improvements for specific needs |
+
+### PDF Accessibility Node (Legacy)
+Simple analysis node for basic WCAG compliance checking.
+
+## 🎯 Node Configuration
+
+### Required Fields
+
+#### Processing Mode
+- **Auto**: Complete AI-powered accessibility automation
+- **Analyze**: Analysis only without document modification
+- **Remediate**: Apply accessibility improvements
+- **Custom**: User-defined tool selection
+
+#### WCAG Compliance Level
+- **A**: Essential accessibility compliance (5 criteria)
+- **AA**: Standard accessibility compliance (recommended)
+- **AAA**: Highest accessibility compliance (10 criteria)
+
+#### PDF Input Method
+- **Binary Data**: From previous n8n nodes (HTTP Request, Google Drive, etc.)
+- **URL**: Download directly from URL (including Google Drive share links)
+- **File Path**: Local file system access
+- **Base64**: Encoded PDF data from previous nodes
+
+### Optional Configuration
+
+#### LLM Provider
+- **Auto**: AI selects optimal provider (recommended)
+- **Anthropic (Claude)**: Best for detailed analysis
+- **OpenAI (GPT)**: Great for creative content
+- **Google (Gemini)**: Cost-effective for structured tasks
+
+#### Advanced Settings
+- **Processing Depth**: Basic, Full, or Deep analysis
+- **Language**: Primary document language (en, es, fr, de, etc.)
+- **Output Format**: PDF, Report, Summary, Log combinations
+- **Debug Mode**: Enable detailed logging
+- **Cost Estimation**: Preview LLM costs before processing
+
+## 🔧 Credentials
+
+This node supports multiple AI providers. Configure credentials in n8n:
+
+### Anthropic API
+```
+API Key: Your Anthropic API key
 ```
 
-### Example Workflows
-
-#### **Complete Accessibility Automation**
+### OpenAI API
 ```
-HTTP Request (PDF Upload) 
-  → PDF Accessibility Enhanced (Auto Mode)
-  → Email (Audit Report)
+API Key: Your OpenAI API key
 ```
 
-#### **Google Drive Integration**
+### Google AI API
 ```
-Google Drive (Download PDF)
-  → PDF Accessibility Enhanced (Analysis Mode)
-  → Google Sheets (Log Results)
+API Key: Your Google AI Studio API key
 ```
 
-#### **URL Processing with Custom Tools**
+Credentials are only required when using specific LLM providers. Auto mode will use available credentials intelligently.
+
+## 📊 Usage Examples
+
+### Complete Automation Workflow
 ```
-Webhook (PDF URL)
-  → PDF Accessibility Enhanced (Custom Mode: Alt-text + Tables)
-  → HTTP Response (JSON Report)
+HTTP Request Node (Upload PDF)
+    ↓
+PDF Accessibility Enhanced
+    ├── Mode: Auto
+    ├── WCAG Level: AA
+    └── LLM Provider: Auto
+    ↓
+Send Email (Audit Report)
 ```
 
-#### **Batch Processing**
+### Google Drive Integration
+```
+Google Drive Node (Download PDF)
+    ↓
+PDF Accessibility Enhanced
+    ├── Mode: Analyze
+    ├── Input: Binary Data
+    └── Output: Report + Summary
+    ↓
+Google Sheets Node (Log Results)
+```
+
+### Batch Processing
 ```
 Schedule Trigger
-  → Read Files (PDF Directory)
-  → Split in Batches
-  → PDF Accessibility Enhanced (Auto Mode)
-  → Save Results to Database
+    ↓
+Read Binary Files Node
+    ↓
+Split in Batches Node
+    ↓
+PDF Accessibility Enhanced
+    ├── Mode: Auto
+    └── WCAG Level: AA
+    ↓
+Merge Node
+    ↓
+Database Node (Save Results)
 ```
 
----
+### Custom Tool Selection
+```
+Webhook Node (PDF Upload)
+    ↓
+PDF Accessibility Enhanced
+    ├── Mode: Custom
+    ├── Operations: [alttext, tables, metadata]
+    └── WCAG Level: AAA
+    ↓
+HTTP Response Node (JSON Report)
+```
 
-## 📊 **Output Structure**
+## 📤 Output Structure
 
-### Intelligent Auto-Processing Output
+### Auto Mode Output
 ```json
 {
   "mode": "intelligent_auto",
@@ -184,282 +175,129 @@ Schedule Trigger
   "documentInfo": {
     "fileName": "document.pdf",
     "pageCount": 12,
-    "fileSize": 1048576,
     "hasImages": true,
-    "hasTables": true,
-    "hasLinks": true,
-    "language": "en"
+    "hasTables": true
   },
   "workflowPlan": {
-    "recommendedTools": ["image_alttext", "table_accessibility", "metadata_enhancer"],
-    "reasoning": ["Document contains images requiring alt-text", "Tables need headers"],
+    "recommendedTools": ["image_alttext", "table_accessibility"],
+    "reasoning": ["Images require alt-text", "Tables need headers"],
     "complexity": "moderate"
   },
   "execution": {
     "toolsExecuted": 3,
     "totalIssuesFound": 15,
     "totalFixesApplied": 12,
-    "processingTime": 8500,
     "success": true
   },
   "accessibilityReport": {
-    "summary": "Accessibility analysis complete. Compliance score: 87% for WCAG AA",
     "complianceScore": 87,
-    "recommendations": [
-      "15 accessibility issues identified across 3 analysis tools",
-      "12 improvements successfully applied"
-    ],
-    "detailedFindings": {
-      "issuesByType": {
-        "missing_alt_text": 5,
-        "table_headers": 3,
-        "metadata": 7
-      },
-      "toolPerformance": [
-        {
-          "tool": "image_alttext",
-          "success": true,
-          "issuesFound": 5,
-          "fixesApplied": 4,
-          "processingTime": 3200
-        }
-      ]
-    }
-  },
-  "auditReport": {
-    "executive_summary": {
-      "overall_score": 87,
-      "total_issues": 15,
-      "total_fixes": 12,
-      "compliance_status": "partial"
-    },
-    "accessibility_findings": {
-      "issues_by_severity": {
-        "critical": [],
-        "high": [/* high priority issues */],
-        "medium": [/* medium priority issues */],
-        "low": [/* low priority issues */]
-      },
-      "wcag_compliance": {
-        "level_a": { "total": 5, "passed": 5, "failed": 0 },
-        "level_aa": { "total": 3, "passed": 2, "failed": 1 },
-        "level_aaa": { "total": 2, "passed": 1, "failed": 1 }
-      }
-    },
-    "recommendations": {
-      "immediate_actions": [
-        "Fix missing table headers for accessibility compliance",
-        "Add descriptive alt-text to remaining images"
-      ],
-      "best_practices": [
-        "Use semantic HTML structure in source documents",
-        "Maintain AA compliance standards across all documents"
-      ]
-    }
+    "recommendations": ["Fix table headers", "Add image alt-text"]
   },
   "exports": {
-    "json": "/* Full JSON report for API integration */",
-    "html": "/* Professional HTML report for stakeholders */",
-    "markdown": "/* Markdown format for documentation */",
-    "csv": "/* CSV format for data analysis */"
+    "json": "/* Full JSON report */",
+    "html": "/* Professional HTML report */",
+    "markdown": "/* Documentation format */",
+    "csv": "/* Data analysis format */"
   },
-  "settings": { /* advanced settings used */ },
-  "timestamp": "2024-12-06T23:47:00.000Z",
-  "processingTime": 8500,
-  "version": "2.0.0"
+  "version": "2.0.1"
 }
 ```
 
-### Analysis Only Output
+### Analyze Mode Output
 ```json
 {
   "mode": "analysis_only",
   "documentInfo": {
     "fileName": "document.pdf",
     "pageCount": 12,
-    "hasImages": true,
-    "hasTables": true,
-    "hasLinks": true
+    "hasImages": true
   },
   "analysis": {
     "recommendedTools": ["image_alttext", "table_accessibility"],
     "estimatedComplexity": "moderate",
-    "potentialImprovements": [
-      "Add descriptive alt-text for images",
-      "Enhance table headers and captions"
-    ]
+    "potentialImprovements": ["Add alt-text", "Enhance tables"]
   },
   "compliancePreview": {
     "currentEstimate": 65,
     "targetLevel": "AA",
-    "gapAnalysis": [
-      "Images likely lack proper alt-text (WCAG 1.1.1)",
-      "Tables may lack proper headers (WCAG 1.3.1)"
-    ]
-  },
-  "wcagLevel": "AA",
-  "version": "2.0.0"
-}
-```
-
----
-
-## 🔧 **LLM Provider Integration**
-
-### Supported Providers
-- **🤖 Auto-Select** - AI chooses optimal provider based on task complexity
-- **🔹 Anthropic (Claude)** - Excellent for detailed accessibility analysis
-- **🔸 OpenAI (GPT)** - Great for creative content generation  
-- **🔻 Google (Gemini)** - Efficient for structured validation tasks
-
-### Provider Configuration
-```javascript
-// Auto-selection (recommended)
-{
-  "llmProvider": "auto"
-}
-
-// Specific provider
-{
-  "llmProvider": "anthropic",
-  "credentials": "anthropicApi"  // Configure in N8N credentials
-}
-```
-
-### Cost Estimation
-Enable cost estimation to preview LLM usage costs before processing:
-```javascript
-{
-  "advancedSettings": {
-    "showCostEstimate": true
+    "gapAnalysis": ["Images lack alt-text", "Tables lack headers"]
   }
 }
 ```
 
----
+## 🛠️ Accessibility Tools
 
-## ⚙️ **Advanced Configuration**
+This node includes 5 integrated accessibility tools:
 
-### Processing Depth Options
-- **Quick Fixes** - Essential accessibility improvements only
-- **Comprehensive** - Thorough accessibility analysis and remediation  
-- **Deep Analysis** - Extensive analysis with iterative improvements
+| Tool | WCAG Coverage | Description |
+|------|---------------|-------------|
+| **Image Alt-Text** | 1.1.1 | AI-generated descriptive alt-text for images |
+| **Heading Structure** | 1.3.1, 2.4.6 | Document hierarchy optimization |
+| **Table Accessibility** | 1.3.1, 1.3.2 | Headers, captions, and structure |
+| **Link Text** | 2.4.4, 2.4.9 | Meaningful link descriptions |
+| **Metadata Enhancer** | 3.1.1, 3.1.2 | PDF metadata and language detection |
 
-### Language Support
-Supports major languages with proper WCAG compliance:
-```javascript
-{
-  "advancedSettings": {
-    "language": "es"  // Spanish, French, German, Italian, Portuguese, etc.
-  }
-}
-```
+### Custom Operations
+When using Custom mode, specify operations:
+- `alttext` - Image alt-text generation
+- `headings` - Heading structure optimization
+- `tables` - Table accessibility enhancement
+- `links` - Link text improvement
+- `metadata` - PDF metadata enhancement
 
-### Debug Mode
-Enable detailed logging for troubleshooting:
-```javascript
-{
-  "advancedSettings": {
-    "debug": true
-  }
-}
-```
+## 🔍 Error Handling
 
----
+### Common Errors
 
-## 📊 **WCAG Compliance Coverage**
+**"Binary data not found"**
+- Ensure previous node provides PDF data
+- Check binary property name configuration
+- Verify file format is PDF
 
-### Level A
-- ✅ **1.1.1** Non-text Content (Image alt-text)
-- ✅ **1.3.1** Info and Relationships (Headings, tables)  
-- ✅ **2.4.1** Bypass Blocks (Document structure)
-- ✅ **2.4.4** Link Purpose (In Context)
-- ✅ **3.1.1** Language of Page (Metadata)
+**"LLM provider authentication failed"**
+- Check API credentials in n8n settings
+- Verify API key permissions and quotas
+- Enable debug mode for detailed error info
 
-### Level AA  
-- ✅ **2.4.6** Headings and Labels
-- ✅ **3.1.2** Language of Parts
-- ✅ **3.2.4** Consistent Identification
+**"Processing timeout"**
+- Large PDFs may need increased timeout
+- Try Basic processing depth for faster results
+- Consider splitting large documents
 
-### Level AAA
-- ✅ **2.4.9** Link Purpose (Link Only)
-- ✅ **2.4.10** Section Headings
+## 📚 Resources
 
----
+- [Complete Documentation](./docs/) - Detailed API reference and examples
+- [Accessibility Tools Guide](./docs/accessibility-tools.md) - In-depth tool documentation
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/) - Web accessibility standards
+- [n8n Community](https://community.n8n.io/) - Get help from the n8n community
 
-## 🚨 **Troubleshooting**
+## ⚡ Performance
 
-### Common Issues
+### Processing Times
+| Document Type | Pages | Processing Time | Recommended Mode |
+|---------------|-------|-----------------|------------------|
+| Simple Text | 1-5 | 30-60s | Auto (Basic) |
+| Mixed Content | 5-15 | 60-180s | Auto (Full) |
+| Image-Heavy | 10-25 | 120-300s | Auto (Deep) |
+| Complex Reports | 15-50 | 90-240s | Custom |
 
-**"Processing failed" or timeout errors**
-- Large PDFs may require increased processing time
-- Try "Quick Fixes" depth for faster processing
-- Ensure LLM provider API is accessible
+### Best Practices
+- Use "Basic" depth for batch processing
+- Enable cost estimation for expensive operations
+- Process during off-peak hours for large documents
+- Cache results to avoid re-processing
 
-**"Tool execution failed"**
-- Verify LLM provider credentials are configured
-- Check API quota and billing status
-- Enable debug mode for detailed error information
+## 🔒 Security & Privacy
 
-**"Binary data missing"**
-- Ensure previous node provides PDF data in binary format
-- For URL method: verify URL points to accessible PDF
-- For Google Drive: ensure proper sharing permissions
+- **No Data Storage**: PDFs processed in memory only
+- **Secure Credentials**: API keys encrypted by n8n
+- **HTTPS Only**: Secure communication with all providers
+- **Auto Cleanup**: Temporary data cleared after processing
+- **Audit Trail**: Complete processing logs available
 
-**Icons not showing**
-- Restart N8N completely after installation
-- Clear browser cache (Ctrl+F5 or Cmd+Shift+R)
-- Verify N8N version >= 1.0.0
+## 🤝 Contributing
 
-### Debug Information
-Enable debug mode for detailed processing logs:
-```javascript
-{
-  "advancedSettings": {
-    "debug": true
-  }
-}
-```
-
----
-
-## 🔒 **Security & Privacy**
-
-- 🗃️ **No Data Storage** - PDFs processed in memory only
-- 🔐 **Secure Credentials** - API keys encrypted by N8N
-- 🌐 **HTTPS Only** - Secure communication with LLM providers
-- 🗑️ **Auto Cleanup** - Temporary data automatically cleared after processing
-- 📋 **Audit Trail** - Complete processing logs for compliance
-
----
-
-## 🔄 **Migration from v1.x**
-
-### Breaking Changes in v2.0.0
-- **Node Structure**: Single enhanced node replaces multiple operation-based workflow
-- **Configuration**: New processing modes replace individual operations
-- **Output Format**: Comprehensive structured reports replace simple validation output
-
-### Migration Steps
-1. **Replace old workflow** with single PDF Accessibility Enhanced node
-2. **Configure processing mode** based on previous operations used:
-   - Previous "Full Workflow" → "Intelligent Auto-Processing"
-   - Previous "Analyze" → "Analysis Only" 
-   - Previous "Remediate" → "Remediation Only"
-3. **Update output handling** for new structured report format
-4. **Review advanced settings** for new configuration options
-
----
-
-## 🤝 **Contributing**
-
-We welcome contributions! Areas of focus:
-
-### Current Priorities
-1. **Performance optimization** for large PDF processing
-2. **Additional accessibility tools** (color contrast, reading order)
-3. **Enhanced LLM integrations** and cost optimization
-4. **Batch processing improvements**
+Contributions are welcome! Please read our [contributing guide](CONTRIBUTING.md) before submitting PRs.
 
 ### Development Setup
 ```bash
@@ -470,44 +308,16 @@ npm run build
 npm test
 ```
 
-### Architecture Overview
-- **Enhanced Node** - Main processing orchestrator with 4 modes
-- **Accessibility Tools** - Modular tools for specific accessibility improvements
-- **Tools Manager** - Orchestration framework with intelligent recommendation
-- **Advanced Reporting** - Multi-format audit report generation
-- **LLM Integration** - Provider abstraction with auto-selection capability
+## 📝 License
+
+[MIT](LICENSE.md) © [Jose Hurtado](mailto:hello@hurtadojose.com)
+
+## 🆘 Support
+
+- [GitHub Issues](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues) - Bug reports and feature requests
+- [n8n Community Forum](https://community.n8n.io/) - General n8n support
+- [Email Support](mailto:hello@hurtadojose.com) - Direct support for this node
 
 ---
 
-## 📋 **Roadmap**
-
-### Upcoming Features
-- 🎨 **Color Contrast Analysis** - Automated color accessibility validation
-- 📖 **Reading Order Optimization** - Logical content flow improvement
-- 🔄 **Batch Processing** - Multiple PDF processing with progress tracking
-- 📱 **Mobile Accessibility** - Touch target and mobile-specific improvements
-- 🌐 **Additional Language Support** - Extended language coverage
-- ⚡ **Performance Enhancements** - Optimized processing for large documents
-
----
-
-## 📝 **License**
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 **Acknowledgments**
-
-- [N8N](https://n8n.io/) for the automation platform
-- [Anthropic](https://anthropic.com/), [OpenAI](https://openai.com/), [Google](https://ai.google.dev/) for AI capabilities  
-- [PDF-lib](https://pdf-lib.js.org/) for PDF manipulation
-- [WCAG Guidelines](https://www.w3.org/WAI/WCAG21/quickref/) for accessibility standards
-
----
-
-**🚀 Ready to transform your PDF accessibility workflow?**
-
-[**Get Started →**](#quick-start) | [**View Examples →**](#example-workflows) | [**Report Issues →**](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues)
-
-**Made with ❤️ for digital accessibility | Empowering inclusive document automation**
+**Built for [n8n](https://n8n.io) • Empowering digital accessibility automation**

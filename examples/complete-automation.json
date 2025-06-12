@@ -167,6 +167,6 @@
   "meta": {
     "description": "Complete PDF accessibility automation workflow with intelligent processing, Google Drive integration, and email notifications. Processes any PDF through AI-powered accessibility analysis and remediation, then delivers professional audit reports.",
     "templateId": "pdf-accessibility-complete",
-    "version": "2.0.0"
+    "version": "2.0.1"
   }
 }
