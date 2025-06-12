@@ -422,7 +422,6 @@ export class PdfAccessibilityEnhanced implements INodeType {
 
 				returnData.push({
 					json: result,
-					binary: result.binaryData ? { data: result.binaryData } : undefined,
 				});
 
 			} catch (error) {
