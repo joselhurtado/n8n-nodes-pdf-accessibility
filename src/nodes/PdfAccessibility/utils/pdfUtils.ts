@@ -68,6 +68,13 @@ export class PdfUtils {
 			console.log('Checking non-Roman characters...');
 			const hasNonRomanChars = this.detectNonRomanChars(textContent);
 			
+			// DEBUG: Show sample of problematic characters
+			if (hasNonRomanChars) {
+				const problematicChars = textContent.match(/[^\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F]/g);
+				console.log('Problematic characters found:', problematicChars ? problematicChars.slice(0, 10) : 'none');
+				console.log('Character codes:', problematicChars ? problematicChars.slice(0, 5).map(c => c.charCodeAt(0)) : 'none');
+			}
+			
 			console.log('Validation results:');
 			console.log('- hasText:', hasText, `(${textLength} >= ${minTextLength})`);
 			console.log('- isScanned:', isScanned);
@@ -242,7 +249,8 @@ export class PdfUtils {
 		// Extended check for Latin scripts including Spanish, French, German, etc.
 		// Allow: Basic Latin, Latin-1 Supplement, Latin Extended-A, Latin Extended-B
 		// This covers accented characters like á, é, í, ó, ú, ñ, ç, etc.
-		const nonRomanPattern = /[^\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F]/;
+		// Also allow common whitespace characters: space, tab, newline, carriage return
+		const nonRomanPattern = /[^\u0009-\u000D\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F]/;
 		return nonRomanPattern.test(text);
 	}
 

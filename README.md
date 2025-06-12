@@ -4,8 +4,22 @@
 ![N8N Community Node](https://img.shields.io/badge/n8n-community--node-ff6d5a)
 ![WCAG 2.1](https://img.shields.io/badge/WCAG-2.1%20AA-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+![Current Version](https://img.shields.io/badge/version-1.2.7-orange)
+![Status](https://img.shields.io/badge/status-KNOWN%20ISSUES-red)
 
 An N8N community node for comprehensive PDF accessibility analysis and remediation, ensuring WCAG 2.1 AA compliance through AI-powered automation.
+
+## 🚨 KNOWN ISSUES (v1.2.7)
+
+**CRITICAL:** Character validation deployment issues prevent proper functionality:
+
+- **Issue:** PDF validation fails with "romanCharsOnly: FAILED" for documents containing newlines
+- **Cause:** Code updates not executing in N8N runtime despite correct NPM version
+- **Impact:** Spanish and formatted PDF documents fail validation
+- **Status:** Under investigation - deployment pipeline issue
+- **Workaround:** None currently available
+
+**Developer Note:** This issue requires investigation of N8N community node caching mechanisms.
 
 ## ✨ Features
 
@@ -104,10 +118,11 @@ Configure credentials for your chosen provider:
 HTTP Request (Upload) → PDF Accessibility (Full Workflow) → Email Results
 ```
 
-### Google Drive Integration (NEW)
+### Google Drive Integration (⚠️ KNOWN ISSUES)
 ```
-Google Drive (Get File) → PDF Accessibility (Full Workflow) → Create Document
+Google Drive (Download) → PDF Accessibility (Full Workflow) → Create Document
 ```
+**Note:** Currently experiencing validation failures with formatted PDFs due to character detection issues.
 
 ### URL Download Workflow (NEW)
 ```
@@ -185,9 +200,36 @@ Schedule → HTTP Request → Split in Batches → PDF Accessibility → Email
 - 🌐 **HTTPS Only** - Secure API communication
 - 🗑️ **Auto Cleanup** - Temporary data automatically cleared
 
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### PDF Validation Fails with "romanCharsOnly: FAILED"
+- **Symptoms:** Spanish or formatted PDFs fail validation
+- **Current Status:** Known issue under investigation (v1.2.7)
+- **Temporary Workaround:** None available
+- **Expected Fix:** Requires deployment pipeline investigation
+
+#### Community Node Version Not Updating
+- **Symptoms:** N8N shows correct version but old code behavior persists
+- **Cause:** N8N community node caching issue
+- **Solutions Attempted:** Container restarts, cache clearing, version bumps
+- **Status:** Unresolved - requires alternative deployment strategy
+
+### Debug Information
+If experiencing issues, check N8N logs for detailed validation output:
+```bash
+docker compose logs n8n | grep -A 20 "PDF VALIDATION DEBUG"
+```
+
 ## 🤝 Contributing
 
-Contributions welcome! Check our [GitHub repository](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility) for details.
+Contributions welcome! **PRIORITY:** Help needed investigating deployment pipeline issues.
+
+### Current Critical Issues
+1. **Character validation deployment failure** (v1.2.7)
+2. **N8N community node caching preventing updates**
+3. **Spanish PDF processing fails due to newline character detection**
 
 ### Development Setup
 ```bash
@@ -197,6 +239,11 @@ npm install
 npm run build
 npm test
 ```
+
+### Known Deployment Issues
+- NPM publishes succeed but runtime code doesn't update
+- Community node UI shows correct version but old code executes
+- Multiple container restart strategies have failed
 
 ## 📝 License
 
