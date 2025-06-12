@@ -23,47 +23,108 @@ function isBase64String(str: string): boolean {
 }
 
 /**
- * Intelligent format detection and conversion to PDF Buffer
+ * Intelligent format detection and conversion to PDF Buffer with enhanced debugging
  */
 async function convertToPdfBuffer(rawData: any, binaryData?: any): Promise<Buffer> {
+	// Enhanced debugging
+	console.log('=== PDF BUFFER CONVERSION DEBUG ===');
+	console.log('rawData type:', typeof rawData);
+	console.log('rawData isBuffer:', Buffer.isBuffer(rawData));
+	console.log('binaryData exists:', !!binaryData);
+	
+	if (rawData && typeof rawData === 'object' && !Buffer.isBuffer(rawData)) {
+		console.log('rawData keys:', Object.keys(rawData));
+	}
+	
+	if (binaryData) {
+		console.log('binaryData keys:', Object.keys(binaryData));
+		if (binaryData.data) {
+			console.log('binaryData.data type:', typeof binaryData.data);
+			console.log('binaryData.data isBuffer:', Buffer.isBuffer(binaryData.data));
+		}
+	}
+	
 	// If it's already a proper Buffer with PDF header, return it
 	if (Buffer.isBuffer(rawData)) {
 		const header = rawData.slice(0, 8).toString();
+		console.log('Buffer header:', header);
 		if (header.startsWith('%PDF-')) {
+			console.log('✅ Valid PDF Buffer found');
 			return rawData;
 		}
 		// If Buffer but not PDF, might be base64 encoded
 		const base64String = rawData.toString();
 		if (isBase64String(base64String)) {
+			console.log('✅ Buffer contains base64, converting');
 			return Buffer.from(base64String, 'base64');
 		}
 	}
 	
 	// Handle base64 string (Google Drive format)
-	if (typeof rawData === 'string' && isBase64String(rawData)) {
-		return Buffer.from(rawData, 'base64');
+	if (typeof rawData === 'string') {
+		console.log('rawData is string, length:', rawData.length);
+		console.log('String starts with:', rawData.substring(0, 20));
+		if (isBase64String(rawData)) {
+			console.log('✅ Valid base64 string found');
+			return Buffer.from(rawData, 'base64');
+		}
 	}
 	
 	// Handle serialized Buffer: {type: "Buffer", data: [array]}
 	if (typeof rawData === 'object' && 
 			rawData.type === 'Buffer' && 
 			Array.isArray(rawData.data)) {
+		console.log('✅ Serialized Buffer found, data length:', rawData.data.length);
 		return Buffer.from(rawData.data);
 	}
 	
 	// Check if binaryData contains the actual data in .data property
 	if (binaryData && binaryData.data) {
+		console.log('Checking binaryData.data...');
 		if (typeof binaryData.data === 'string' && isBase64String(binaryData.data)) {
+			console.log('✅ Base64 in binaryData.data found');
 			return Buffer.from(binaryData.data, 'base64');
 		}
 		if (typeof binaryData.data === 'object' && 
 				binaryData.data.type === 'Buffer' && 
 				Array.isArray(binaryData.data.data)) {
+			console.log('✅ Serialized Buffer in binaryData.data found');
 			return Buffer.from(binaryData.data.data);
+		}
+		
+		// NEW: Check if binaryData.data is already a Buffer
+		if (Buffer.isBuffer(binaryData.data)) {
+			console.log('✅ Direct Buffer in binaryData.data found');
+			return binaryData.data;
 		}
 	}
 	
-	throw new Error('Unable to convert binary data to PDF Buffer. Ensure the data is a valid PDF.');
+	// NEW: Additional Google Drive formats
+	if (binaryData && binaryData.content) {
+		console.log('Checking binaryData.content...');
+		if (typeof binaryData.content === 'string' && isBase64String(binaryData.content)) {
+			console.log('✅ Base64 in binaryData.content found');
+			return Buffer.from(binaryData.content, 'base64');
+		}
+	}
+	
+	// NEW: Check nested data structures
+	if (rawData && rawData.data && typeof rawData.data === 'string') {
+		console.log('Checking rawData.data string...');
+		if (isBase64String(rawData.data)) {
+			console.log('✅ Base64 in rawData.data found');
+			return Buffer.from(rawData.data, 'base64');
+		}
+	}
+	
+	console.log('❌ No valid PDF format detected');
+	console.log('Available data summary:', {
+		rawDataType: typeof rawData,
+		rawDataKeys: rawData && typeof rawData === 'object' ? Object.keys(rawData) : 'N/A',
+		binaryDataKeys: binaryData ? Object.keys(binaryData) : 'N/A'
+	});
+	
+	throw new Error('Unable to convert binary data to PDF Buffer. Ensure the data is a valid PDF. Check console logs for detailed format analysis.');
 }
 
 export async function getPdfInput(
