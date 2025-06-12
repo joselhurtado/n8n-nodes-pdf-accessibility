@@ -1,45 +1,33 @@
 # n8n-nodes-pdf-accessibility
 
-[![npm version](https://badge.fury.io/js/n8n-nodes-pdf-accessibility.svg)](https://www.npmjs.com/package/n8n-nodes-pdf-accessibility)
-[![npm downloads](https://img.shields.io/npm/dt/n8n-nodes-pdf-accessibility.svg)](https://www.npmjs.com/package/n8n-nodes-pdf-accessibility)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**AI-powered PDF accessibility automation for n8n workflows**
-
-This is an n8n community node that provides comprehensive PDF accessibility analysis, intelligent remediation, and WCAG compliance reporting. Transform any PDF into a fully accessible document through automated AI-powered tools.
-
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
+AI-powered PDF accessibility automation for n8n workflows.
 
 ## Installation
 
-### For n8n Cloud & Desktop App
-1. Go to **Settings** → **Community Nodes**
-2. Click **Install** and enter: `n8n-nodes-pdf-accessibility`
-3. Click **Install** and agree to the risks
-4. The node will be available after installation
+### n8n Cloud & Desktop App
+1. Go to Settings → Community Nodes
+2. Click Install and enter: `n8n-nodes-pdf-accessibility`
+3. Click Install and agree to the risks
 
-### For Self-Hosted n8n
+### Self-Hosted n8n
 ```bash
-# Navigate to your n8n installation directory
 npm install n8n-nodes-pdf-accessibility
-
-# Restart n8n to load the new nodes
+# Restart n8n
 ```
 
-### For Docker
+### Docker
 ```bash
-# Install in existing container
 docker exec <container-id> npm install n8n-nodes-pdf-accessibility
 docker restart <container-id>
 ```
 
 ## Features
 
-### Two Powerful Nodes
+This package provides two nodes for PDF accessibility automation:
 
 **PDF Accessibility Enhanced Node** - Main automation node with 4 processing modes:
 - **Auto**: AI analyzes and applies optimal accessibility improvements
-- **Analyze**: Comprehensive analysis without document modification  
+- **Analyze**: Comprehensive analysis without document modification
 - **Remediate**: Apply improvements with detailed reporting
 - **Custom**: User-defined tool selection for specific needs
 
@@ -47,13 +35,11 @@ docker restart <container-id>
 
 ### Built-in Accessibility Tools
 
-| Tool | WCAG Coverage | Description |
-|------|---------------|-------------|
-| **Image Alt-Text** | 1.1.1 | AI-generated descriptive alt-text for images |
-| **Heading Structure** | 1.3.1, 2.4.6 | Document hierarchy optimization |
-| **Table Accessibility** | 1.3.1, 1.3.2 | Headers, captions, and structure enhancement |
-| **Link Text** | 2.4.4, 2.4.9 | Meaningful link descriptions |
-| **Metadata Enhancer** | 3.1.1, 3.1.2 | PDF metadata and language detection |
+- **Image Alt-Text** (WCAG 1.1.1) - AI-generated descriptive alt-text for images
+- **Heading Structure** (WCAG 1.3.1, 2.4.6) - Document hierarchy optimization
+- **Table Accessibility** (WCAG 1.3.1, 1.3.2) - Headers, captions, and structure enhancement
+- **Link Text** (WCAG 2.4.4, 2.4.9) - Meaningful link descriptions
+- **Metadata Enhancer** (WCAG 3.1.1, 3.1.2) - PDF metadata and language detection
 
 ### WCAG Compliance Levels
 - **Level A**: Essential accessibility (5 criteria)
@@ -102,22 +88,11 @@ Google Sheets Node (Log Results)
 
 Configure API credentials in n8n for AI-powered features:
 
-### Anthropic API
-```
-API Key: Your Anthropic Claude API key
-```
+- **Anthropic API**: Your Anthropic Claude API key
+- **OpenAI API**: Your OpenAI GPT API key
+- **Google AI API**: Your Google AI Studio API key
 
-### OpenAI API  
-```
-API Key: Your OpenAI GPT API key
-```
-
-### Google AI API
-```
-API Key: Your Google AI Studio API key
-```
-
-Auto mode uses available credentials intelligently. Credentials only required when using specific providers.
+Auto mode uses available credentials intelligently.
 
 ## Output Structure
 
@@ -125,7 +100,7 @@ Auto mode uses available credentials intelligently. Credentials only required wh
 ```json
 {
   "mode": "intelligent_auto",
-  "wcagLevel": "AA", 
+  "wcagLevel": "AA",
   "documentInfo": {
     "fileName": "document.pdf",
     "pageCount": 12,
@@ -145,30 +120,8 @@ Auto mode uses available credentials intelligently. Credentials only required wh
   "exports": {
     "json": "/* Full JSON report */",
     "html": "/* Professional HTML report */",
-    "markdown": "/* Documentation format */", 
+    "markdown": "/* Documentation format */",
     "csv": "/* Data analysis format */"
-  }
-}
-```
-
-### Analysis Mode Response
-```json
-{
-  "mode": "analysis_only",
-  "documentInfo": {
-    "fileName": "document.pdf",
-    "pageCount": 12,
-    "hasImages": true
-  },
-  "analysis": {
-    "recommendedTools": ["image_alttext", "table_accessibility"],
-    "estimatedComplexity": "moderate",
-    "potentialImprovements": ["Add alt-text", "Enhance tables"]
-  },
-  "compliancePreview": {
-    "currentEstimate": 65,
-    "targetLevel": "AA",
-    "gapAnalysis": ["Images lack alt-text", "Tables lack headers"]
   }
 }
 ```
@@ -177,33 +130,22 @@ Auto mode uses available credentials intelligently. Credentials only required wh
 
 For Custom mode, specify operations:
 - `alttext` - Image alt-text generation
-- `headings` - Heading structure optimization  
+- `headings` - Heading structure optimization
 - `tables` - Table accessibility enhancement
 - `links` - Link text improvement
 - `metadata` - PDF metadata enhancement
 
-Example:
-```json
-{
-  "mode": "custom",
-  "customOperations": ["alttext", "tables", "metadata"],
-  "wcagLevel": "AA"
-}
-```
-
 ## Performance
 
 ### Processing Times
-| Document Type | Pages | Time | Mode |
-|---------------|-------|------|------|
-| Simple Text | 1-5 | 30-60s | Auto (Basic) |
-| Mixed Content | 5-15 | 60-180s | Auto (Full) |
-| Image-Heavy | 10-25 | 120-300s | Auto (Deep) |
-| Complex Reports | 15-50 | 90-240s | Custom |
+- Simple Text (1-5 pages): 30-60s
+- Mixed Content (5-15 pages): 60-180s
+- Image-Heavy (10-25 pages): 120-300s
+- Complex Reports (15-50 pages): 90-240s
 
 ### Best Practices
 - Use "Basic" depth for batch processing
-- Enable cost estimation for large operations  
+- Enable cost estimation for large operations
 - Process during off-peak hours for large documents
 - Cache results to avoid re-processing
 
@@ -216,7 +158,7 @@ Example:
 - Check binary property name configuration
 - Verify file format is PDF
 
-**"LLM provider authentication failed"** 
+**"LLM provider authentication failed"**
 - Check API credentials in n8n settings
 - Verify API key permissions and quotas
 - Enable debug mode for detailed error info
@@ -237,13 +179,11 @@ Example:
 ## Support
 
 - [GitHub Issues](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/issues) - Bug reports and feature requests
-- [n8n Community Forum](https://community.n8n.io/) - General n8n support  
+- [n8n Community Forum](https://community.n8n.io/) - General n8n support
 - [Documentation](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/tree/main/docs) - Complete API reference
 
 ## License
 
-[MIT](https://github.com/joselhurtado/n8n-nodes-pdf-accessibility/blob/main/LICENSE) © [Jose Hurtado](mailto:hello@hurtadojose.com)
+MIT © [Jose Hurtado](mailto:hello@hurtadojose.com)
 
----
-
-**Built for [n8n](https://n8n.io) workflow automation**
+Built for [n8n](https://n8n.io) workflow automation.
