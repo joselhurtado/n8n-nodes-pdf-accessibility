@@ -43,7 +43,7 @@ export class PdfUtils {
 			const hasText = textLength >= minTextLength;
 			const isScanned = textLength < 50; // Heuristic for scanned documents
 			const tooManyPages = pageCount > maxPages;
-			const hasFormFields = this.detectFormFields(pdfData.text);
+			const hasFormFields = this.detectFormFields(pdfBuffer.toString('binary'));
 			const hasNonRomanChars = this.detectNonRomanChars(textContent);
 
 			// Overall validation
@@ -74,6 +74,22 @@ export class PdfUtils {
 				validationDetails,
 			};
 		} catch (error) {
+			// Enhanced error handling with specific error messages
+			let errorMessage = 'Unknown validation error';
+			
+			if (error instanceof Error) {
+				errorMessage = error.message;
+				
+				// Provide specific guidance for common errors
+				if (error.message.includes('Invalid PDF')) {
+					errorMessage = 'Invalid PDF format or corrupted file. Please ensure the file is a valid PDF.';
+				} else if (error.message.includes('password')) {
+					errorMessage = 'Password-protected PDFs are not supported. Please provide an unprotected PDF.';
+				} else if (error.message.includes('encrypted')) {
+					errorMessage = 'Encrypted PDFs are not supported. Please provide an unencrypted PDF.';
+				}
+			}
+			
 			return {
 				valid: false,
 				pageCount: 0,
@@ -88,14 +104,14 @@ export class PdfUtils {
 				fileName,
 				extractedText: '',
 				validationDetails: {
-					fileSize: false,
+					fileSize: pdfBuffer.length <= maxFileSize,
 					pageCount: false,
 					hasReadableText: false,
 					notScanned: false,
 					noForms: false,
 					romanCharsOnly: false,
 				},
-				error: error instanceof Error ? error.message : String(error),
+				error: errorMessage,
 			};
 		}
 	}
@@ -160,9 +176,14 @@ export class PdfUtils {
 	/**
 	 * Detects if PDF contains form fields
 	 */
-	private static detectFormFields(pdfText: string): boolean {
-		const formIndicators = ['/AcroForm', '/XFA', '/Widget', '/Tx', '/Ch', '/Btn'];
-		return formIndicators.some(indicator => pdfText.includes(indicator));
+	private static detectFormFields(pdfRawContent: string): boolean {
+		try {
+			const formIndicators = ['/AcroForm', '/XFA', '/Widget', '/Tx', '/Ch', '/Btn'];
+			return formIndicators.some(indicator => pdfRawContent.includes(indicator));
+		} catch (error) {
+			// If detection fails, assume no forms to avoid blocking validation
+			return false;
+		}
 	}
 
 	/**
