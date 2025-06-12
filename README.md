@@ -1,22 +1,17 @@
 # n8n-nodes-pdf-accessibility
 
-Complete AI-powered PDF accessibility automation for n8n workflows.
-
-## Overview
-
-Transform any PDF into a fully accessible, WCAG-compliant document through intelligent automation. This n8n community node provides enterprise-grade accessibility analysis, remediation, and professional audit reporting powered by AI.
+AI-powered PDF accessibility automation for n8n workflows.
 
 ## Installation
 
 ### n8n Cloud & Desktop App
-1. Go to **Settings** → **Community Nodes**
-2. Click **Install** and enter: `n8n-nodes-pdf-accessibility`
-3. Click **Install** and agree to the risks
+1. Go to Settings → Community Nodes
+2. Click Install and enter: `n8n-nodes-pdf-accessibility`
+3. Click Install and agree to the risks
 
 ### Self-Hosted n8n
 ```bash
 npm install n8n-nodes-pdf-accessibility
-# Restart n8n
 ```
 
 ### Docker
@@ -27,111 +22,84 @@ docker restart <container-id>
 
 ## Features
 
+Transform any PDF into a fully accessible, WCAG-compliant document through intelligent automation. This n8n community node provides enterprise-grade accessibility analysis, remediation, and professional audit reporting powered by AI.
+
 ### AI-Powered Accessibility Tools
 
-This node includes 5 integrated accessibility tools that automatically analyze and improve PDF documents:
+This node includes 5 integrated accessibility tools:
 
-| Tool | WCAG Coverage | Description |
-|------|---------------|-------------|
-| **Image Alt-Text** | 1.1.1 | AI-generated descriptive alt-text for images |
-| **Heading Structure** | 1.3.1, 2.4.6 | Document hierarchy optimization |
-| **Table Accessibility** | 1.3.1, 1.3.2 | Headers, captions, and structure enhancement |
-| **Link Text** | 2.4.4, 2.4.9 | Meaningful link descriptions |
-| **Metadata Enhancer** | 3.1.1, 3.1.2 | PDF metadata and language detection |
+- **Image Alt-Text** (WCAG 1.1.1) - AI-generated descriptive alt-text for images
+- **Heading Structure** (WCAG 1.3.1, 2.4.6) - Document hierarchy optimization  
+- **Table Accessibility** (WCAG 1.3.1, 1.3.2) - Headers, captions, and structure enhancement
+- **Link Text** (WCAG 2.4.4, 2.4.9) - Meaningful link descriptions
+- **Metadata Enhancer** (WCAG 3.1.1, 3.1.2) - PDF metadata and language detection
 
 ### Processing Modes
 
 Choose from 4 intelligent processing modes:
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| **Auto** | AI analyzes content and applies optimal accessibility improvements | Complete automation for unknown documents |
-| **Analyze** | Comprehensive accessibility analysis without modification | Understanding issues before improvements |
-| **Remediate** | Apply accessibility improvements with detailed reporting | Batch processing of analyzed documents |
-| **Custom** | Select specific accessibility tools for targeted improvements | Focused improvements for specific needs |
+- **Auto** - AI analyzes content and applies optimal accessibility improvements
+- **Analyze** - Comprehensive accessibility analysis without modification
+- **Remediate** - Apply accessibility improvements with detailed reporting  
+- **Custom** - Select specific accessibility tools for targeted improvements
 
 ### WCAG Compliance Levels
 
-- **Level A**: Essential accessibility (5 criteria)
-- **Level AA**: Standard compliance (recommended)
-- **Level AAA**: Highest accessibility (10 criteria)
-
-### Professional Reporting
-
-- **Compliance Scoring** - Weighted WCAG A/AA/AAA compliance analysis
-- **Visual Diff System** - Before/after accessibility improvement comparison
-- **Multi-format Export** - JSON, HTML, Markdown, CSV for different use cases
-- **Audit Documentation** - Professional reports for stakeholder presentation
+- **Level A** - Essential accessibility (5 criteria)
+- **Level AA** - Standard compliance (recommended)
+- **Level AAA** - Highest accessibility (10 criteria)
 
 ## Configuration
 
 ### Required Settings
 
-#### Processing Mode
-- **Auto**: Complete AI-powered accessibility automation
-- **Analyze**: Analysis only without document modification
-- **Remediate**: Apply accessibility improvements
-- **Custom**: User-defined tool selection
+**Processing Mode**
+- Auto: Complete AI-powered accessibility automation
+- Analyze: Analysis only without document modification
+- Remediate: Apply accessibility improvements
+- Custom: User-defined tool selection
 
-#### WCAG Compliance Level
-- **A**: Essential accessibility compliance
-- **AA**: Standard accessibility compliance (recommended)
-- **AAA**: Highest accessibility compliance
+**WCAG Compliance Level**
+- A: Essential accessibility compliance
+- AA: Standard accessibility compliance (recommended)
+- AAA: Highest accessibility compliance
 
-#### PDF Input Method
-- **Binary Data**: From previous n8n nodes (HTTP Request, Google Drive, etc.)
-- **URL**: Download directly from URL (including Google Drive share links)
-- **File Path**: Local file system access
-- **Base64**: Encoded PDF data from previous nodes
+**PDF Input Method**
+- Binary Data: From previous n8n nodes (HTTP Request, Google Drive, etc.)
+- URL: Download directly from URL (including Google Drive share links)
+- File Path: Local file system access
+- Base64: Encoded PDF data from previous nodes
 
 ### Optional Settings
 
-#### LLM Provider
-- **Auto**: AI selects optimal provider (recommended)
-- **Anthropic (Claude)**: Best for detailed analysis
-- **OpenAI (GPT)**: Great for creative content
-- **Google (Gemini)**: Cost-effective for structured tasks
+**LLM Provider**
+- Auto: AI selects optimal provider (recommended)
+- Anthropic (Claude): Best for detailed analysis
+- OpenAI (GPT): Great for creative content
+- Google (Gemini): Cost-effective for structured tasks
 
-#### Advanced Settings
-- **Processing Depth**: Basic, Full, or Deep analysis
-- **Language**: Primary document language (en, es, fr, de, etc.)
-- **Output Format**: PDF, Report, Summary, Log combinations
-- **Debug Mode**: Enable detailed logging
-- **Cost Estimation**: Preview LLM costs before processing
-
-### Custom Operations
-
-For Custom mode, specify operations:
-- `alttext` - Image alt-text generation
-- `headings` - Heading structure optimization
-- `tables` - Table accessibility enhancement
-- `links` - Link text improvement
-- `metadata` - PDF metadata enhancement
-
-Example:
-```json
-{
-  "mode": "custom",
-  "customOperations": ["alttext", "tables", "metadata"],
-  "wcagLevel": "AA"
-}
-```
+**Advanced Settings**
+- Processing Depth: Basic, Full, or Deep analysis
+- Language: Primary document language (en, es, fr, de, etc.)
+- Output Format: PDF, Report, Summary, Log combinations
+- Debug Mode: Enable detailed logging
+- Cost Estimation: Preview LLM costs before processing
 
 ## AI Provider Setup
 
 Configure API credentials in n8n for AI-powered features:
 
-### Anthropic API
+**Anthropic API**
 ```
 API Key: Your Anthropic Claude API key
 ```
 
-### OpenAI API
+**OpenAI API**
 ```
 API Key: Your OpenAI GPT API key
 ```
 
-### Google AI API
+**Google AI API**
 ```
 API Key: Your Google AI Studio API key
 ```
@@ -193,6 +161,24 @@ PDF Accessibility
 HTTP Response Node (JSON Report)
 ```
 
+## Custom Operations
+
+For Custom mode, specify operations:
+- `alttext` - Image alt-text generation
+- `headings` - Heading structure optimization
+- `tables` - Table accessibility enhancement
+- `links` - Link text improvement
+- `metadata` - PDF metadata enhancement
+
+Example:
+```json
+{
+  "mode": "custom",
+  "customOperations": ["alttext", "tables", "metadata"],
+  "wcagLevel": "AA"
+}
+```
+
 ## Output Structure
 
 ### Auto Mode Response
@@ -206,11 +192,6 @@ HTTP Response Node (JSON Report)
     "hasImages": true,
     "hasTables": true
   },
-  "workflowPlan": {
-    "recommendedTools": ["image_alttext", "table_accessibility"],
-    "reasoning": ["Images require alt-text", "Tables need headers"],
-    "complexity": "moderate"
-  },
   "execution": {
     "toolsExecuted": 3,
     "totalIssuesFound": 15,
@@ -222,32 +203,10 @@ HTTP Response Node (JSON Report)
     "recommendations": ["Fix table headers", "Add image alt-text"]
   },
   "exports": {
-    "json": "/* Full JSON report */",
-    "html": "/* Professional HTML report */",
-    "markdown": "/* Documentation format */",
-    "csv": "/* Data analysis format */"
-  }
-}
-```
-
-### Analyze Mode Response
-```json
-{
-  "mode": "analysis_only",
-  "documentInfo": {
-    "fileName": "document.pdf",
-    "pageCount": 12,
-    "hasImages": true
-  },
-  "analysis": {
-    "recommendedTools": ["image_alttext", "table_accessibility"],
-    "estimatedComplexity": "moderate",
-    "potentialImprovements": ["Add alt-text", "Enhance tables"]
-  },
-  "compliancePreview": {
-    "currentEstimate": 65,
-    "targetLevel": "AA",
-    "gapAnalysis": ["Images lack alt-text", "Tables lack headers"]
+    "json": "Full JSON report",
+    "html": "Professional HTML report",
+    "markdown": "Documentation format",
+    "csv": "Data analysis format"
   }
 }
 ```
@@ -255,12 +214,10 @@ HTTP Response Node (JSON Report)
 ## Performance
 
 ### Processing Times
-| Document Type | Pages | Time | Recommended Mode |
-|---------------|-------|------|------------------|
-| Simple Text | 1-5 | 30-60s | Auto (Basic) |
-| Mixed Content | 5-15 | 60-180s | Auto (Full) |
-| Image-Heavy | 10-25 | 120-300s | Auto (Deep) |
-| Complex Reports | 15-50 | 90-240s | Custom |
+- Simple Text (1-5 pages): 30-60s
+- Mixed Content (5-15 pages): 60-180s  
+- Image-Heavy (10-25 pages): 120-300s
+- Complex Reports (15-50 pages): 90-240s
 
 ### Best Practices
 - Use "Basic" depth for batch processing
@@ -310,6 +267,4 @@ HTTP Response Node (JSON Report)
 
 MIT © [Jose Hurtado](mailto:hello@hurtadojose.com)
 
----
-
-**Built for [n8n](https://n8n.io) workflow automation**
+Built for [n8n](https://n8n.io) workflow automation

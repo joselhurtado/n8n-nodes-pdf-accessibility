@@ -12,7 +12,7 @@ import { SUPPORTED_LANGUAGES } from './config';
 import { AccessibilityToolsManager, PdfAnalysisContext } from './tools/AccessibilityToolsManager';
 import { AdvancedReportingEngine } from './utils/advancedReporting';
 
-export class PdfAccessibilityEnhanced implements INodeType {
+export class PdfAccessibility implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'PDF Accessibility',
 		name: 'pdfAccessibility',
@@ -22,7 +22,7 @@ export class PdfAccessibilityEnhanced implements INodeType {
 		subtitle: '={{$parameter["mode"] + " - " + $parameter["wcagLevel"]}}',
 		description: 'AI-powered PDF accessibility automation with WCAG compliance levels and intelligent workflow orchestration.',
 		defaults: {
-			name: 'PDF Accessibility Enhanced',
+			name: 'PDF Accessibility',
 		},
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
