@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-pdf-accessibility",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "AI-powered PDF accessibility automation for N8N - comprehensive WCAG compliance analysis, intelligent remediation, and professional audit reporting with 5 integrated accessibility tools",
   "keywords": [
     "n8n-community-node-package",
@@ -49,7 +49,6 @@
       "dist/credentials/CustomApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/PdfAccessibility/PdfAccessibility.node.js",
       "dist/nodes/PdfAccessibility/PdfAccessibilityEnhanced.node.js"
     ]
   },

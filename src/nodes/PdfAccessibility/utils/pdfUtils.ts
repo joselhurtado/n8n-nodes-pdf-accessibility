@@ -99,9 +99,51 @@ export class PdfUtils {
 			
 			if (!valid) {
 				console.log('❌ Validation failed. Failed checks:');
+				const failedChecks: string[] = [];
 				Object.entries(validationDetails).forEach(([key, value]) => {
-					if (!value) console.log(`  - ${key}: FAILED`);
+					if (!value) {
+						console.log(`  - ${key}: FAILED`);
+						failedChecks.push(key);
+					}
 				});
+				
+				// Create specific error message based on failed checks
+				let specificError = 'PDF validation failed: ';
+				if (failedChecks.includes('fileSize')) {
+					specificError += `File too large (${pdfBuffer.length} bytes > ${maxFileSize} bytes). `;
+				}
+				if (failedChecks.includes('pageCount')) {
+					specificError += `Too many pages (${pageCount} > ${maxPages}). `;
+				}
+				if (failedChecks.includes('hasReadableText')) {
+					specificError += `Insufficient text content (${textLength} chars < ${minTextLength} required). `;
+				}
+				if (failedChecks.includes('notScanned')) {
+					specificError += `Scanned document detected (not allowed). `;
+				}
+				if (failedChecks.includes('noForms')) {
+					specificError += `Form fields detected (not allowed). `;
+				}
+				if (failedChecks.includes('romanCharsOnly')) {
+					specificError += `Non-Roman characters detected. `;
+				}
+				
+				return {
+					valid: false,
+					pageCount,
+					textLength,
+					wordCount,
+					hasText,
+					isScanned,
+					tooManyPages,
+					hasFormFields,
+					hasNonRomanChars,
+					fileSize: pdfBuffer.length,
+					fileName,
+					extractedText: textContent.substring(0, PDF_LIMITS.MAX_TEXT_EXTRACT),
+					validationDetails,
+					error: specificError.trim(),
+				};
 			} else {
 				console.log('✅ All validation checks passed!');
 			}

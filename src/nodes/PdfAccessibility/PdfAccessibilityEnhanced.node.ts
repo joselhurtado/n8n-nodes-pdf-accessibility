@@ -14,8 +14,8 @@ import { AdvancedReportingEngine } from './utils/advancedReporting';
 
 export class PdfAccessibilityEnhanced implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'PDF Accessibility Enhanced',
-		name: 'pdfAccessibilityEnhanced',
+		displayName: 'PDF Accessibility',
+		name: 'pdfAccessibility',
 		icon: 'file:pdf-accessibility.svg',
 		group: ['transform'],
 		version: 1,
@@ -526,28 +526,28 @@ export class PdfAccessibilityEnhanced implements INodeType {
 					settings: advancedSettings,
 					timestamp: new Date().toISOString(),
 					processingTime: Date.now() - startTime,
-					version: '2.0.3',
+					version: '3.0.0',
 				};
 						break;
 					case 'analyze':
 						result = {
 						mode: 'analysis_only',
 						message: 'Analysis completed - Phase 4 implementation ready',
-						version: '2.0.3',
+						version: '3.0.0',
 					};
 						break;
 					case 'remediate':
 						result = {
 						mode: 'remediation_only',
 						message: 'Remediation completed - Phase 4 implementation ready',
-						version: '2.0.3',
+						version: '3.0.0',
 					};
 						break;
 					case 'custom':
 						result = {
 							mode: 'custom_workflow',
 							message: 'Custom workflow completed - Phase 4 implementation ready',
-							version: '2.0.3',
+							version: '3.0.0',
 						};
 						break;
 					default:
