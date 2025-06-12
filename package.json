@@ -46,7 +46,7 @@
   },
   "scripts": {
     "build": "tsc && gulp build:icons",
-    "build:icons": "mkdir -p dist/icons/operations && cp -r icons/* dist/icons/",
+    "build:icons": "mkdir -p dist/icons && cp icons/pdf-accessibility.svg dist/ && cp -r icons/* dist/icons/",
     "verify:icons": "test -f dist/icons/pdf-accessibility.svg && echo 'Icons verified' || (echo 'Icons missing!' && exit 1)",
     "prebuild": "rm -rf dist",
     "dev": "tsc --watch",
