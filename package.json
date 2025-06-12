@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-pdf-accessibility",
-  "version": "1.2.9",
+  "version": "1.3.0",
   "description": "N8N community node for PDF accessibility remediation and WCAG compliance analysis",
   "keywords": [
     "n8n-community-node-package",
@@ -41,7 +41,8 @@
       "dist/credentials/CustomApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/PdfAccessibility/PdfAccessibility.node.js"
+      "dist/nodes/PdfAccessibility/PdfAccessibility.node.js",
+      "dist/nodes/PdfAccessibility/PdfAccessibilityEnhanced.node.js"
     ]
   },
   "scripts": {

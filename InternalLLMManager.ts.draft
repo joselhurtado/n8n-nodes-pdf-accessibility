@@ -1,0 +1,154 @@
+import { IExecuteFunctions } from 'n8n-workflow';
+import { BaseLLMProvider } from './base';
+import { AnthropicProvider } from './anthropic';
+import { OpenAIProvider } from './openai';
+import { GoogleProvider } from './google';
+
+export interface LLMResponse {
+	content: string;
+	tokensUsed?: number;
+	model?: string;
+	provider?: string;
+}
+
+export interface LLMRequest {
+	prompt: string;
+	systemPrompt?: string;
+	maxTokens?: number;
+	temperature?: number;
+}
+
+export class InternalLLMManager {
+	private providers: Map<string, BaseLLMProvider> = new Map();
+	
+	constructor(private context: IExecuteFunctions, private itemIndex: number) {
+		// Initialization will be called explicitly
+	}
+
+	async initializeProviders(): Promise<void> {
+		try {
+			const anthropicCreds = await this.context.getCredentials('anthropicApi', this.itemIndex);
+			this.providers.set('anthropic', new AnthropicProvider(anthropicCreds));
+		} catch {}
+		
+		try {
+			const openaiCreds = await this.context.getCredentials('openAIApi', this.itemIndex);
+			this.providers.set('openai', new OpenAIProvider(openaiCreds));
+		} catch {}
+		
+		try {
+			const googleCreds = await this.context.getCredentials('googleApi', this.itemIndex);
+			this.providers.set('google', new GoogleProvider(googleCreds));
+		} catch {}
+	}
+
+	/**
+	 * Intelligent provider selection based on request characteristics
+	 */
+	private selectOptimalProvider(request: LLMRequest): string {
+		const promptLength = request.prompt.length;
+		const hasComplexAnalysis = request.prompt.includes('analysis') || request.prompt.includes('structure');
+		const needsCreativity = request.prompt.includes('generate') || request.prompt.includes('create');
+
+		// Intelligence-based selection logic
+		if (promptLength > 10000 && hasComplexAnalysis) {
+			return 'anthropic'; // Claude excels at long-form analysis
+		} else if (needsCreativity || request.prompt.includes('alt-text')) {
+			return 'openai'; // GPT excels at creative tasks
+		} else if (request.prompt.includes('compliance') || request.prompt.includes('validate')) {
+			return 'google'; // Gemini good for structured validation
+		}
+
+		// Default to user's preferred provider
+		return this.context.getNodeParameter('llmProvider', this.itemIndex, 'anthropic') as string;
+	}
+
+	/**
+	 * Execute LLM request with automatic provider selection and retry logic
+	 */
+	async executeRequest(request: LLMRequest): Promise<LLMResponse> {
+		const selectedProvider = this.selectOptimalProvider(request);
+		const provider = this.providers.get(selectedProvider);
+
+		if (!provider) {
+			throw new Error(`Provider ${selectedProvider} not available`);
+		}
+
+		try {
+			const result = await provider.generateText({
+				prompt: request.prompt,
+				systemPrompt: request.systemPrompt,
+				maxTokens: request.maxTokens || 4000,
+				temperature: request.temperature || 0.3,
+			});
+
+			return {
+				content: result,
+				provider: selectedProvider,
+				// Note: Token usage would need to be implemented in each provider
+			};
+
+		} catch (error) {
+			// Retry with fallback provider
+			const fallbackProvider = this.getFallbackProvider(selectedProvider);
+			if (fallbackProvider && fallbackProvider !== selectedProvider) {
+				try {
+					const fallback = this.providers.get(fallbackProvider);
+					if (fallback) {
+						const result = await fallback.generateText({
+							prompt: request.prompt,
+							systemPrompt: request.systemPrompt,
+							maxTokens: request.maxTokens || 4000,
+							temperature: request.temperature || 0.3,
+						});
+
+						return {
+							content: result,
+							provider: `${fallbackProvider} (fallback)`,
+						};
+					}
+				} catch (fallbackError) {
+					// If fallback also fails, throw original error
+				}
+			}
+
+			throw error;
+		}
+	}
+
+	private getFallbackProvider(currentProvider: string): string | null {
+		const fallbackMap: Record<string, string> = {
+			'anthropic': 'openai',
+			'openai': 'google',
+			'google': 'anthropic',
+		};
+		return fallbackMap[currentProvider] || null;
+	}
+
+	/**
+	 * Execute multiple LLM requests in parallel for different analysis aspects
+	 */
+	async executeParallelRequests(requests: LLMRequest[]): Promise<LLMResponse[]> {
+		const promises = requests.map(request => this.executeRequest(request));
+		return Promise.all(promises);
+	}
+
+	/**
+	 * Get estimated cost for a request (placeholder - would need actual pricing)
+	 */
+	estimateCost(request: LLMRequest, provider?: string): number {
+		const selectedProvider = provider || this.selectOptimalProvider(request);
+		const promptTokens = Math.ceil(request.prompt.length / 4); // Rough token estimation
+		const maxTokens = request.maxTokens || 4000;
+
+		// Placeholder pricing (would need actual provider pricing)
+		const pricing: Record<string, { input: number; output: number }> = {
+			'anthropic': { input: 0.000008, output: 0.000024 }, // Claude 3.5 Sonnet
+			'openai': { input: 0.000005, output: 0.000015 },     // GPT-4
+			'google': { input: 0.000001, output: 0.000002 },     // Gemini Pro
+		};
+
+		const providerPricing = pricing[selectedProvider] || pricing.anthropic;
+		return (promptTokens * providerPricing.input) + (maxTokens * providerPricing.output);
+	}
+}
