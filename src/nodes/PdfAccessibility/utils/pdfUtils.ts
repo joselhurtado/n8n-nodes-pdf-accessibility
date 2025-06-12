@@ -250,7 +250,7 @@ export class PdfUtils {
 		// Allow: Basic Latin, Latin-1 Supplement, Latin Extended-A, Latin Extended-B
 		// This covers accented characters like á, é, í, ó, ú, ñ, ç, etc.
 		// Also allow common whitespace characters: space, tab, newline, carriage return
-		const nonRomanPattern = /[^\u0009-\u000D\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F]/;
+		const nonRomanPattern = /[^\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\s]/;
 		return nonRomanPattern.test(text);
 	}
 

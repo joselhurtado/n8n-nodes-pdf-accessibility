@@ -23,49 +23,44 @@ function isBase64String(str: string): boolean {
 }
 
 /**
- * Intelligent format detection and conversion to PDF Buffer with enhanced debugging
+ * Intelligent format detection and conversion to PDF Buffer
+ * Handles all major binary data formats from Google Drive, HTTP Request, and other N8N nodes
  */
 async function convertToPdfBuffer(rawData: any, binaryData?: any): Promise<Buffer> {
-	// Enhanced debugging
-	console.log('=== PDF BUFFER CONVERSION DEBUG ===');
-	console.log('rawData type:', typeof rawData);
-	console.log('rawData isBuffer:', Buffer.isBuffer(rawData));
-	console.log('binaryData exists:', !!binaryData);
+	// Optional debug mode (can be enabled via environment variable)
+	const debug = process.env.PDF_DEBUG === 'true';
 	
-	if (rawData && typeof rawData === 'object' && !Buffer.isBuffer(rawData)) {
-		console.log('rawData keys:', Object.keys(rawData));
-	}
-	
-	if (binaryData) {
-		console.log('binaryData keys:', Object.keys(binaryData));
-		if (binaryData.data) {
-			console.log('binaryData.data type:', typeof binaryData.data);
-			console.log('binaryData.data isBuffer:', Buffer.isBuffer(binaryData.data));
-		}
+	if (debug) {
+		console.log('=== PDF BUFFER CONVERSION DEBUG ===');
+		console.log('rawData type:', typeof rawData);
+		console.log('rawData isBuffer:', Buffer.isBuffer(rawData));
+		console.log('binaryData exists:', !!binaryData);
 	}
 	
 	// If it's already a proper Buffer with PDF header, return it
 	if (Buffer.isBuffer(rawData)) {
 		const header = rawData.slice(0, 8).toString();
-		console.log('Buffer header:', header);
+		if (debug) console.log('Buffer header:', header);
 		if (header.startsWith('%PDF-')) {
-			console.log('✅ Valid PDF Buffer found');
+			if (debug) console.log('✅ Valid PDF Buffer found');
 			return rawData;
 		}
 		// If Buffer but not PDF, might be base64 encoded
 		const base64String = rawData.toString();
 		if (isBase64String(base64String)) {
-			console.log('✅ Buffer contains base64, converting');
+			if (debug) console.log('✅ Buffer contains base64, converting');
 			return Buffer.from(base64String, 'base64');
 		}
 	}
 	
 	// Handle base64 string (Google Drive format)
 	if (typeof rawData === 'string') {
-		console.log('rawData is string, length:', rawData.length);
-		console.log('String starts with:', rawData.substring(0, 20));
+		if (debug) {
+			console.log('rawData is string, length:', rawData.length);
+			console.log('String starts with:', rawData.substring(0, 20));
+		}
 		if (isBase64String(rawData)) {
-			console.log('✅ Valid base64 string found');
+			if (debug) console.log('✅ Valid base64 string found');
 			return Buffer.from(rawData, 'base64');
 		}
 	}
@@ -74,57 +69,70 @@ async function convertToPdfBuffer(rawData: any, binaryData?: any): Promise<Buffe
 	if (typeof rawData === 'object' && 
 			rawData.type === 'Buffer' && 
 			Array.isArray(rawData.data)) {
-		console.log('✅ Serialized Buffer found, data length:', rawData.data.length);
+		if (debug) console.log('✅ Serialized Buffer found, data length:', rawData.data.length);
 		return Buffer.from(rawData.data);
 	}
 	
 	// Check if binaryData contains the actual data in .data property
 	if (binaryData && binaryData.data) {
-		console.log('Checking binaryData.data...');
+		if (debug) console.log('Checking binaryData.data...');
 		if (typeof binaryData.data === 'string' && isBase64String(binaryData.data)) {
-			console.log('✅ Base64 in binaryData.data found');
+			if (debug) console.log('✅ Base64 in binaryData.data found');
 			return Buffer.from(binaryData.data, 'base64');
 		}
 		if (typeof binaryData.data === 'object' && 
 				binaryData.data.type === 'Buffer' && 
 				Array.isArray(binaryData.data.data)) {
-			console.log('✅ Serialized Buffer in binaryData.data found');
+			if (debug) console.log('✅ Serialized Buffer in binaryData.data found');
 			return Buffer.from(binaryData.data.data);
 		}
 		
-		// NEW: Check if binaryData.data is already a Buffer
+		// Check if binaryData.data is already a Buffer
 		if (Buffer.isBuffer(binaryData.data)) {
-			console.log('✅ Direct Buffer in binaryData.data found');
+			if (debug) console.log('✅ Direct Buffer in binaryData.data found');
 			return binaryData.data;
 		}
 	}
 	
-	// NEW: Additional Google Drive formats
+	// Additional Google Drive formats
 	if (binaryData && binaryData.content) {
-		console.log('Checking binaryData.content...');
+		if (debug) console.log('Checking binaryData.content...');
 		if (typeof binaryData.content === 'string' && isBase64String(binaryData.content)) {
-			console.log('✅ Base64 in binaryData.content found');
+			if (debug) console.log('✅ Base64 in binaryData.content found');
 			return Buffer.from(binaryData.content, 'base64');
 		}
 	}
 	
-	// NEW: Check nested data structures
+	// Check nested data structures
 	if (rawData && rawData.data && typeof rawData.data === 'string') {
-		console.log('Checking rawData.data string...');
+		if (debug) console.log('Checking rawData.data string...');
 		if (isBase64String(rawData.data)) {
-			console.log('✅ Base64 in rawData.data found');
+			if (debug) console.log('✅ Base64 in rawData.data found');
 			return Buffer.from(rawData.data, 'base64');
 		}
 	}
 	
-	console.log('❌ No valid PDF format detected');
-	console.log('Available data summary:', {
+	// Enhanced error with troubleshooting guidance
+	const errorDetails = {
 		rawDataType: typeof rawData,
 		rawDataKeys: rawData && typeof rawData === 'object' ? Object.keys(rawData) : 'N/A',
 		binaryDataKeys: binaryData ? Object.keys(binaryData) : 'N/A'
-	});
+	};
 	
-	throw new Error('Unable to convert binary data to PDF Buffer. Ensure the data is a valid PDF. Check console logs for detailed format analysis.');
+	if (debug) {
+		console.log('❌ No valid PDF format detected');
+		console.log('Available data summary:', errorDetails);
+	}
+	
+	throw new Error(
+		'Unable to convert binary data to PDF Buffer. ' +
+		'Troubleshooting: ' +
+		'1) Ensure the input is a valid PDF file. ' +
+		'2) If using Google Drive, try "Get File" or "Download File" operations. ' +
+		'3) If using HTTP Request, ensure response type is binary. ' +
+		'4) Enable debug mode (set PDF_DEBUG=true) for detailed analysis. ' +
+		`Data analysis: ${JSON.stringify(errorDetails)}`
+	);
 }
 
 export async function getPdfInput(
@@ -179,16 +187,49 @@ export async function getPdfInput(
 			}
 			
 			try {
+				// Convert Google Drive share links to direct download links
+				let downloadUrl = url;
+				if (url.includes('drive.google.com/file/d/')) {
+					// Extract file ID from share link
+					const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+					if (fileIdMatch) {
+						downloadUrl = `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+					}
+				} else if (url.includes('docs.google.com/document/d/')) {
+					// Extract document ID from Google Docs link
+					const docIdMatch = url.match(/\/document\/d\/([a-zA-Z0-9-_]+)/);
+					if (docIdMatch) {
+						downloadUrl = `https://docs.google.com/document/d/${docIdMatch[1]}/export?format=pdf`;
+					}
+				}
+				
 				const response = await context.helpers.httpRequest({
 					method: 'GET',
-					url: url,
+					url: downloadUrl,
 					returnFullResponse: false,
+					encoding: 'arraybuffer',
+					headers: {
+						'User-Agent': 'N8N-PDF-Accessibility-Node/1.2.8'
+					}
 				});
 				
 				pdfBuffer = Buffer.isBuffer(response) ? response : Buffer.from(response);
+				
+				// Extract filename from URL or use default
 				fileName = url.split('/').pop()?.split('?')[0] || 'downloaded.pdf';
+				if (!fileName.endsWith('.pdf')) {
+					fileName += '.pdf';
+				}
+				
 			} catch (error) {
-				throw new Error(`Failed to download PDF from URL "${url}": ${error instanceof Error ? error.message : String(error)}`);
+				throw new Error(
+					`Failed to download PDF from URL "${url}". ` +
+					'Troubleshooting: ' +
+					'1) Ensure the URL is publicly accessible. ' +
+					'2) For Google Drive, use shareable links with "Anyone with the link can view" permissions. ' +
+					'3) For Google Docs, the document will be automatically converted to PDF. ' +
+					`Error: ${error instanceof Error ? error.message : String(error)}`
+				);
 			}
 			break;
 		}
@@ -207,10 +248,20 @@ export async function getPdfInput(
 				fileName = binaryData.fileName || 'binary.pdf';
 				
 			} catch (error) {
+				const isFormatError = error instanceof Error && error.message.includes('Unable to convert binary data');
+				if (isFormatError) {
+					// Re-throw format conversion errors with original message
+					throw error;
+				}
+				
 				throw new Error(
 					`PDF file required: No binary data found with property name "${binaryPropertyName}". ` +
-					'Connect a node that provides PDF data (like HTTP Request, Read Binary File, Google Drive, etc.) ' +
-					'or switch to "File Path", "URL", or "Base64 Data" input method.'
+					'Troubleshooting: ' +
+					'1) Connect a node that provides PDF data (HTTP Request, Read Binary File, Google Drive, etc.). ' +
+					'2) Ensure the previous node outputs binary data, not JSON. ' +
+					'3) Check the binary property name matches the previous node output. ' +
+					'4) Alternative: Switch to "File Path", "URL", or "Base64 Data" input method. ' +
+					'5) For Google Drive: Use "Get File" or "Download File" operations instead of "Get" or "List".'
 				);
 			}
 			break;
