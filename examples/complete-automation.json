@@ -1,0 +1,172 @@
+{
+  "name": "PDF Accessibility Complete Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.webhookUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "name": "Upload PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [240, 300],
+      "id": "upload-pdf"
+    },
+    {
+      "parameters": {
+        "mode": "auto",
+        "wcagLevel": "AA",
+        "llmProvider": "auto",
+        "inputMethod": "binary",
+        "binaryPropertyName": "data",
+        "advancedSettings": {
+          "depth": "full",
+          "outputFormat": ["pdf", "report", "summary"],
+          "debug": false,
+          "showCostEstimate": true
+        }
+      },
+      "name": "PDF Accessibility Enhanced",
+      "type": "n8n-nodes-pdf-accessibility.pdfAccessibilityEnhanced",
+      "position": [460, 300],
+      "id": "pdf-accessibility"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "destinationId": "={{ $json.folderId }}",
+        "name": "Accessibility Report - {{ $json.documentInfo.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "options": {
+          "parents": ["{{ $json.folderId }}"]
+        }
+      },
+      "name": "Save Report to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [680, 240],
+      "id": "save-report"
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail",
+        "message": {
+          "to": "{{ $json.recipientEmail }}",
+          "subject": "PDF Accessibility Report - {{ $json.documentInfo.fileName }}",
+          "body": "Hello,\n\nThe accessibility analysis for '{{ $json.documentInfo.fileName }}' has been completed.\n\n📊 **Results Summary**:\n- WCAG Compliance Score: {{ $json.accessibilityReport.complianceScore }}%\n- Total Issues Found: {{ $json.execution.totalIssuesFound }}\n- Fixes Applied: {{ $json.execution.totalFixesApplied }}\n- Processing Time: {{ $json.execution.processingTime }}ms\n\n🎯 **Compliance Status**: {{ $json.auditReport.executive_summary.compliance_status }}\n\n📋 **Key Recommendations**:\n{{ $json.auditReport.recommendations.immediate_actions.join('\n- ') }}\n\nThe complete accessibility report has been saved to Google Drive.\n\nBest regards,\nAccessibility Automation Team"
+        },
+        "options": {
+          "attachments": "={{ $json.exports.html }}"
+        }
+      },
+      "name": "Email Results",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [680, 360],
+      "id": "email-results"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.execution.success }}",
+              "operation": "equal",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "name": "Processing Success?",
+      "type": "n8n-nodes-base.if",
+      "position": [460, 480],
+      "id": "success-check"
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail",
+        "message": {
+          "to": "{{ $json.recipientEmail }}",
+          "subject": "PDF Accessibility Processing Failed - {{ $json.documentInfo.fileName }}",
+          "body": "Hello,\n\nThe accessibility processing for '{{ $json.documentInfo.fileName }}' has failed.\n\n❌ **Error Details**:\n{{ $json.error || 'Unknown error occurred during processing' }}\n\nPlease check the document format and try again, or contact support if the issue persists.\n\nBest regards,\nAccessibility Automation Team"
+        }
+      },
+      "name": "Email Error Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [680, 540],
+      "id": "email-error"
+    }
+  ],
+  "connections": {
+    "Upload PDF": {
+      "main": [
+        [
+          {
+            "node": "PDF Accessibility Enhanced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Accessibility Enhanced": {
+      "main": [
+        [
+          {
+            "node": "Processing Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processing Success?": {
+      "main": [
+        [
+          {
+            "node": "Save Report to Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveDataProgressExecution": false,
+    "executionTimeout": 1800,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["accessibility", "pdf", "automation", "wcag"],
+  "triggerCount": 0,
+  "updatedAt": "2024-12-06T23:50:00.000Z",
+  "versionId": "1",
+  "meta": {
+    "description": "Complete PDF accessibility automation workflow with intelligent processing, Google Drive integration, and email notifications. Processes any PDF through AI-powered accessibility analysis and remediation, then delivers professional audit reports.",
+    "templateId": "pdf-accessibility-complete",
+    "version": "2.0.0"
+  }
+}
