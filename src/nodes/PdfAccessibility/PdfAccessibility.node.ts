@@ -161,6 +161,11 @@ export class PdfAccessibility implements INodeType {
 						description: 'Use PDF binary data from previous node',
 					},
 					{
+						name: 'Download from URL',
+						value: 'url',
+						description: 'Download PDF from a URL (Google Drive share links, direct URLs, etc.)',
+					},
+					{
 						name: 'File Path (Local/Network)',
 						value: 'filepath',
 						description: 'Provide file path to PDF (supports expressions)',
@@ -173,6 +178,19 @@ export class PdfAccessibility implements INodeType {
 				],
 				default: 'binary',
 				description: 'Choose how to provide the PDF file',
+			},
+			{
+				displayName: 'URL',
+				name: 'url',
+				type: 'string',
+				default: '',
+				placeholder: 'https://drive.google.com/file/d/... or {{$json.pdfUrl}}',
+				description: 'URL to download PDF from. Supports Google Drive share links, direct URLs, and expressions.',
+				displayOptions: {
+					show: {
+						inputMethod: ['url'],
+					},
+				},
 			},
 			{
 				displayName: 'File Path',

@@ -15,7 +15,9 @@ An N8N community node for comprehensive PDF accessibility analysis and remediati
 - 📊 **Detailed Reporting** - Generate professional HTML and text reports
 - 🎯 **WCAG Compliance** - Target A, AA, or AAA compliance levels
 - 🌐 **Multi-language Support** - Support for major European languages
-- 🔄 **Flexible Input Methods** - Binary data, file paths, or base64 encoding
+- 🔄 **Flexible Input Methods** - Binary data, URLs, file paths, or base64 encoding
+- 🌐 **Smart Format Detection** - Auto-handles Google Drive, base64 strings, and Buffer objects
+- 📁 **URL Downloads** - Direct PDF download from Google Drive share links and URLs
 
 ## 🚀 Installation & Setup
 
@@ -52,11 +54,19 @@ If icons don't appear after installation:
 ## 🛠️ Configuration
 
 ### Input Methods
-The node supports **three flexible input methods**:
+The node supports **four flexible input methods**:
 
-1. **📁 Binary Data** - From previous nodes (HTTP Request, Google Drive, etc.)
-2. **🔗 File Path** - Direct file system access with expressions
-3. **📄 Base64** - For API-provided encoded data
+1. **📁 Binary Data** - From previous nodes (HTTP Request, Google Drive, etc.) with intelligent format detection
+2. **🌐 URL Download** - Direct download from URLs including Google Drive share links
+3. **🔗 File Path** - Direct file system access with expressions
+4. **📄 Base64** - For API-provided encoded data
+
+#### Smart Format Detection (NEW in v1.2.0)
+The Binary Data method now automatically detects and converts:
+- ✅ **Google Drive formats** - Base64 strings from Google Drive nodes
+- ✅ **Serialized Buffers** - `{type: "Buffer", data: [array]}` format
+- ✅ **Raw base64 strings** - Direct base64 encoded PDF data
+- ✅ **Standard Buffers** - Traditional Buffer objects
 
 ### LLM Provider Setup
 Configure credentials for your chosen provider:
@@ -92,6 +102,16 @@ Configure credentials for your chosen provider:
 ### Simple Workflow
 ```
 HTTP Request (Upload) → PDF Accessibility (Full Workflow) → Email Results
+```
+
+### Google Drive Integration (NEW)
+```
+Google Drive (Get File) → PDF Accessibility (Full Workflow) → Create Document
+```
+
+### URL Download Workflow (NEW)
+```
+Webhook → Set (PDF URL) → PDF Accessibility (URL Method) → Send Response
 ```
 
 ### Batch Processing
@@ -147,10 +167,11 @@ Schedule → HTTP Request → Split in Batches → PDF Accessibility → Email
 - Verify LLM provider API credentials
 - Check API quota and billing status
 
-**"Binary data missing"**
-- **Binary Method**: Ensure previous node provides PDF data
-- **File Path Method**: Check file path exists
-- **Base64 Method**: Verify base64 data is valid
+**"Binary data missing"** or **"Unknown validation error"**
+- **Binary Method**: Now auto-detects Google Drive formats! If still failing, ensure previous node provides PDF data
+- **URL Method**: Check URL is accessible and points to a valid PDF file
+- **File Path Method**: Check file path exists and is readable
+- **Base64 Method**: Verify base64 data is valid PDF content
 
 **Icons not showing**
 - Restart N8N after installation
