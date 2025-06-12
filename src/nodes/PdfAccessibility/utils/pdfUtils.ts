@@ -239,8 +239,10 @@ export class PdfUtils {
 	 * Detects non-Roman characters in text
 	 */
 	private static detectNonRomanChars(text: string): boolean {
-		// Basic check for common non-Roman scripts
-		const nonRomanPattern = /[^\u0020-\u007F\u00C0-\u017F\u0100-\u017F]/;
+		// Extended check for Latin scripts including Spanish, French, German, etc.
+		// Allow: Basic Latin, Latin-1 Supplement, Latin Extended-A, Latin Extended-B
+		// This covers accented characters like á, é, í, ó, ú, ñ, ç, etc.
+		const nonRomanPattern = /[^\u0020-\u007F\u00A0-\u00FF\u0100-\u017F\u0180-\u024F]/;
 		return nonRomanPattern.test(text);
 	}
 
