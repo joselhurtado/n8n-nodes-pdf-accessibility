@@ -20,7 +20,7 @@ export class PdfAccessibility implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'PDF Accessibility',
 		name: 'pdfAccessibility',
-		icon: 'file:pdf-accessibility.svg',
+    icon: 'file:pdf-accessibility.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
